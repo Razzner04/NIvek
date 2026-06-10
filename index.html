@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo de Perfumes</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Nunito+Sans:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #00bcd4;
+    --gold-light: #4dd0e1;
+    --gold-pale: #e0f7fa;
+    --dark: #050403;
+    --dark2: #0d0b09;
+    --dark3: #181410;
+    --cream: #e0f7fa;
+    --text: #b2ebf2;
+    --text-muted: #4dd0e1;
+    --fem: #c96b8a;
+    --masc: #4a7ab5;
+    --uni: #7ab58a;
+    --ext: #00bcd4;
+    --ext-light: #4dd0e1;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--dark); color: var(--text); font-family: 'Nunito', sans-serif; font-weight: 400; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 10%, rgba(0,188,212,0.06) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 80% 90%, rgba(0,188,212,0.04) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+
+  header { position: relative; text-align: center; padding: 70px 20px 50px; border-bottom: 1px solid rgba(0,188,212,0.2); }
+  header::before { content: '✦ ✦ ✦'; display: block; color: var(--gold); letter-spacing: 12px; font-size: 10px; margin-bottom: 20px; opacity: 0.6; }
+  .logo-text { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 6.5vw, 5.5rem); font-weight: 300; letter-spacing: 0.15em; color: var(--cream); line-height: 1; margin-bottom: 8px; }
+  .nivek-logo { display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:6px; }
+  .nivek-clover { filter: drop-shadow(0 0 18px rgba(0,188,212,0.35)); }
+  .nivek-wordmark { font-family:'Nunito',sans-serif; font-weight:800; font-size:clamp(2rem,5vw,3.8rem); letter-spacing:0.35em; color:var(--cream); text-transform:uppercase; line-height:1; }
+  .logo-sub { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.1rem, 2.8vw, 1.55rem); color: var(--gold); letter-spacing: 0.3em; font-weight: 300; margin-bottom: 30px; }
+  .stats-row { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top: 20px; }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Nunito', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--gold); display: block; line-height: 1.2; }
+  .stat-label { font-family: 'Nunito', sans-serif; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+
+  .controls { position: sticky; top: 0; z-index: 100; background: rgba(3,5,8,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,188,212,0.15); padding: 18px 24px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+  .filter-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .filter-label { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-right: 4px; }
+  .cat-btn { background: transparent; border: 1px solid rgba(0,188,212,0.3); color: var(--text-muted); padding: 7px 18px; font-family: 'Nunito', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.25s; border-radius: 2px; }
+  .cat-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .cat-btn.active { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+  .cat-btn.fem.active { background: var(--fem); border-color: var(--fem); color: white; }
+  .cat-btn.masc.active { background: var(--masc); border-color: var(--masc); color: white; }
+  .cat-btn.uni.active { background: var(--uni); border-color: var(--uni); color: var(--dark); }
+  .cat-btn.ext.active { background: var(--ext); border-color: var(--ext); color: #fff; }
+  .search-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(0,188,212,0.2); color: var(--cream); padding: 8px 16px; font-family: 'Nunito', sans-serif; font-size: 0.75rem; border-radius: 2px; outline: none; width: 220px; transition: border-color 0.25s; }
+  .search-box::placeholder { color: var(--text-muted); }
+  .search-box:focus { border-color: var(--gold); }
+  .sort-select { background: rgba(255,255,255,0.04); border: 1px solid rgba(0,188,212,0.2); color: var(--text); padding: 8px 14px; font-family: 'Nunito', sans-serif; font-size: 0.7rem; border-radius: 2px; outline: none; cursor: pointer; }
+  .sort-select option { background: #0d0b09; }
+  .price-range { display: flex; align-items: center; gap: 10px; }
+  .range-input { -webkit-appearance: none; width: 110px; height: 2px; background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--pct, 100%), rgba(0,188,212,0.2) var(--pct, 100%)); outline: none; cursor: pointer; }
+  .range-input::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--gold); border-radius: 50%; cursor: pointer; }
+  .range-val { font-size: 0.65rem; color: var(--gold); min-width: 80px; }
+  .results-bar { padding: 12px 28px; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); }
+  .results-count { color: var(--gold); font-weight: 500; }
+  .main { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 24px 20px 60px; }
+  .brand-section { margin-bottom: 48px; }
+  .brand-header { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid rgba(0,188,212,0.12); }
+  .brand-name { font-family: 'Playfair Display', serif; font-size: 1.65rem; font-weight: 600; letter-spacing: 0.08em; color: var(--cream); }
+  .brand-count { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); padding: 3px 10px; border: 1px solid rgba(0,188,212,0.2); border-radius: 20px; }
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+
+  .product-card { background: var(--dark2); border: 1px solid rgba(0,188,212,0.1); padding: 0; border-radius: 6px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; animation: fadeIn 0.4s ease both; display: flex; flex-direction: column; }
+  .card-img-wrap { width: 100%; height: 170px; background: #0a0807; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; border-bottom: 1px solid rgba(0,188,212,0.08); flex-shrink: 0; }
+  .card-img-wrap img { max-height: 155px; max-width: 90%; object-fit: contain; transition: transform 0.4s; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
+  .product-card:hover .card-img-wrap img { transform: scale(1.06); }
+  .card-img-placeholder { display: flex; flex-direction: column; align-items: center; gap: 6px; color: rgba(0,188,212,0.25); }
+  .card-img-placeholder .ph-emoji { font-size: 2.2rem; }
+  .card-img-placeholder .ph-name { font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(0,188,212,0.2); text-align: center; padding: 0 12px; line-height: 1.4; }
+  .card-img-loading { display: flex; align-items: center; justify-content: center; }
+  .card-img-spinner { width: 20px; height: 20px; border: 1px solid rgba(0,188,212,0.15); border-top-color: rgba(0,188,212,0.5); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .card-body { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .product-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; z-index: 2; }
+  .product-card.fem::before { background: var(--fem); }
+  .product-card.masc::before { background: var(--masc); }
+  .product-card.uni::before { background: var(--uni); }
+  .product-card.ext::before { background: var(--ext); }
+  .product-card:hover { border-color: rgba(0,188,212,0.4); background: var(--dark3); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
+  .product-cat-tag { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; margin-bottom: 10px; display: inline-block; padding: 2px 8px; border-radius: 2px; }
+  .fem .product-cat-tag { color: var(--fem); background: rgba(201,107,138,0.1); }
+  .masc .product-cat-tag { color: #a8c4e8; background: rgba(74,122,181,0.1); }
+  .uni .product-cat-tag { color: #b8e8c4; background: rgba(122,181,138,0.1); }
+  .ext .product-cat-tag { color: var(--ext-light); background: rgba(184,134,11,0.12); }
+  .product-name { font-family: 'Playfair Display', serif; font-size: 1.12rem; font-weight: 500; color: var(--cream); line-height: 1.3; margin-bottom: 6px; }
+  .product-dupe { font-size: 0.6rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4; font-style: italic; letter-spacing: 0.03em; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-size: 0.85rem; font-weight: 600; letter-spacing: 0.05em; }
+  .product-vol { font-size: 0.6rem; color: var(--text-muted); }
+  .detail-hint { position: absolute; bottom: 10px; right: 12px; font-size: 0.55rem; color: rgba(0,188,212,0.4); letter-spacing: 0.1em; opacity: 0; transition: opacity 0.25s; }
+  .product-card:hover .detail-hint { opacity: 1; }
+  .no-results { text-align: center; padding: 80px 20px; font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--text-muted); font-style: italic; display: none; }
+  .price-tiers { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 28px; border-bottom: 1px solid rgba(0,188,212,0.08); }
+  .tier { display: flex; align-items: center; gap: 6px; font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .tier-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .cat-divider { display: flex; align-items: center; gap: 16px; padding: 28px 0 20px; }
+  .cat-divider-label { font-family: 'Playfair Display', serif; font-size: 2rem; font-style: italic; color: var(--cream); white-space: nowrap; }
+  .cat-divider-line { flex: 1; height: 1px; background: rgba(0,188,212,0.15); }
+  .cat-divider-badge { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 4px 14px; border-radius: 20px; font-weight: 500; }
+  .fem-badge { color: var(--fem); border: 1px solid var(--fem); background: rgba(201,107,138,0.08); }
+  .masc-badge { color: #a8c4e8; border: 1px solid var(--masc); background: rgba(74,122,181,0.08); }
+  .uni-badge { color: #b8e8c4; border: 1px solid var(--uni); background: rgba(122,181,138,0.08); }
+  .ext-badge { color: var(--ext-light); border: 1px solid var(--ext); background: rgba(184,134,11,0.08); }
+  .modal-cat-tag.ext { color: var(--ext-light); background: rgba(184,134,11,0.12); }
+  footer { text-align: center; padding: 30px; border-top: 1px solid rgba(0,188,212,0.1); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--text-muted); text-transform: uppercase; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: flex-start; padding: 30px 20px; overflow-y: auto; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #f8fafa; border: 2px solid #00bcd4; border-radius: 20px; box-shadow: 0 0 40px rgba(0,188,212,0.2); max-width: 720px; width: 100%; position: relative; animation: modalIn 0.35s ease; overflow: hidden; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(30px) scale(0.97); } to { opacity: 1; transform: none; } }
+  .modal-close { position: absolute; top: 18px; right: 20px; background: none; border: none; color: #00bcd4; font-size: 1.4rem; cursor: pointer; line-height: 1; z-index: 10; transition: color 0.2s; }
+  .modal-close:hover { color: #006064; }
+  .modal-accent { height: 5px; width: 100%; border-radius: 20px 20px 0 0; }
+  .modal-accent.fem { background: linear-gradient(90deg, var(--fem), transparent); }
+  .modal-accent.masc { background: linear-gradient(90deg, var(--masc), transparent); }
+  .modal-accent.uni { background: linear-gradient(90deg, var(--uni), transparent); }
+  .modal-body { padding: 32px 36px 36px; background: #f8fafa; border-radius: 0 0 16px 16px; }
+  .modal-top { display: flex; gap: 28px; margin-bottom: 28px; }
+  .modal-img-wrap { width: 170px; min-width: 170px; height: 220px; border-radius: 3px; overflow: hidden; background: var(--dark3); border: 1px solid rgba(0,188,212,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .modal-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-img-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.65rem; letter-spacing: 0.1em; }
+  .modal-img-placeholder span { font-size: 2rem; }
+  .modal-info { flex: 1; }
+  .modal-cat-tag { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600; margin-bottom: 10px; display: inline-block; padding: 2px 10px; border-radius: 2px; }
+  .modal-cat-tag.fem { color: var(--fem); background: rgba(201,107,138,0.1); }
+  .modal-cat-tag.masc { color: #a8c4e8; background: rgba(74,122,181,0.1); }
+  .modal-cat-tag.uni { color: #b8e8c4; background: rgba(122,181,138,0.1); }
+  .modal-brand { font-size: 0.65rem; letter-spacing: 0.2em; color: #111; text-transform: uppercase; margin-bottom: 6px; font-weight: 700; }
+  .modal-name { font-family: 'Playfair Display', serif; font-size: 1.95rem; font-weight: 600; color: #00bcd4; line-height: 1.2; margin-bottom: 12px; }
+  .modal-price-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .modal-price { font-size: 1.3rem; font-weight: 600; }
+  .modal-dupe-label { font-size: 0.6rem; letter-spacing: 0.15em; color: #222; text-transform: uppercase; margin-bottom: 4px; font-weight: 700; font-family: 'Nunito', sans-serif; }
+  .modal-dupe { font-size: 0.85rem; color: #222; font-style: italic; font-weight: 600; }
+  .modal-divider { border: none; border-top: 1px solid rgba(0,188,212,0.1); margin: 20px 0; }
+  .modal-section-title { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: #111; margin-bottom: 10px; font-weight: 800; font-family: 'Nunito', sans-serif; }
+  .modal-desc { font-size: 0.88rem; line-height: 1.8; color: #000; font-family: 'Nunito', sans-serif; }
+  .modal-notes-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .note-tag { background: rgba(0,188,212,0.08); border: 1px solid rgba(0,188,212,0.2); color: var(--gold); font-size: 0.65rem; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.05em; }
+  .note-tag.top { border-color: rgba(0,188,212,0.4); background: rgba(0,188,212,0.12); }
+  .note-tag.mid { border-color: #ccc; background: #f0f0f0; color: #333; }
+  .note-tag.base { border-color: #bbb; background: #e8e8e8; color: #444; }
+  .notes-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+  .notes-legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.58rem; color: #333; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+  .notes-legend-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .loading-state { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 40px; color: #00bcd4; background: #f8fafa; }
+  .loading-spinner { width: 32px; height: 32px; border: 2px solid rgba(0,188,212,0.2); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: #444; }
+  .error-state { padding: 24px; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
+  .wa-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: #128C7E; color: #fff; font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 14px 24px; border-radius: 3px; transition: background 0.25s, transform 0.2s; margin-top: 4px; }
+  .wa-btn:hover { background: #075E54; transform: translateY(-1px); }
+  .wa-icon { display: flex; align-items: center; }
+  /* ── CART FAB ─────────────────────────────────────────────── */
+  .cart-fab { position: absolute; top: 24px; right: 24px; background: #00bcd4; border: none; color: #fff; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,188,212,0.4); transition: background 0.2s, transform 0.2s; z-index: 10; }
+  .cart-fab:hover { background: #0097a7; transform: scale(1.08); }
+  .cart-badge { position: absolute; top: -4px; right: -4px; background: #ff5252; color: #fff; font-family: 'Nunito', sans-serif; font-size: 0.6rem; font-weight: 800; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  /* ── CART OVERLAY + PANEL ──────────────────────────────────── */
+  .cart-overlay { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); justify-content: flex-end; }
+  .cart-overlay.open { display: flex; }
+  .cart-panel { background: #f8fafa; width: 100%; max-width: 420px; height: 100%; display: flex; flex-direction: column; animation: slideIn 0.3s ease; box-shadow: -8px 0 32px rgba(0,0,0,0.3); }
+  @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  .cart-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 2px solid #00bcd4; background: #fff; }
+  .cart-title { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.1rem; color: #111; letter-spacing: 0.05em; }
+  .cart-close { background: none; border: none; color: #00bcd4; font-size: 1.3rem; cursor: pointer; transition: color 0.2s; }
+  .cart-close:hover { color: #006064; }
+  .cart-items { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .cart-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; height: 100%; color: #999; font-family: 'Nunito', sans-serif; font-size: 0.85rem; }
+  .cart-item { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #00bcd4; }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.82rem; color: #111; line-height: 1.3; }
+  .cart-item-brand { font-size: 0.65rem; color: #666; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+  .cart-item-price { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.9rem; color: #00bcd4; white-space: nowrap; }
+  .cart-item-remove { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1rem; padding: 4px; transition: color 0.2s; flex-shrink: 0; }
+  .cart-item-remove:hover { color: #ff5252; }
+  .cart-footer { padding: 16px 20px; border-top: 1px solid #e0e0e0; background: #fff; }
+  .cart-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .cart-total-label { font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.85rem; color: #333; text-transform: uppercase; letter-spacing: 0.1em; }
+  .cart-total-price { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 1.4rem; color: #00bcd4; }
+  .cart-checkout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: #128C7E; color: #fff; font-family: 'Nunito', sans-serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; border: none; cursor: pointer; padding: 15px; border-radius: 10px; transition: background 0.25s, transform 0.2s; }
+  .cart-checkout-btn:hover { background: #075E54; transform: translateY(-1px); }
+
+  @media (max-width: 600px) {
+    .controls { flex-direction: column; align-items: stretch; }
+    .search-box { width: 100%; }
+    .products-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .modal-top { flex-direction: column; }
+    .modal-img-wrap { width: 100%; min-width: unset; height: 180px; }
+    .modal-body { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header style="position:relative">
+  <!-- CART BUTTON TOP RIGHT -->
+  <button class="cart-fab" id="cart-fab" onclick="openCart()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    <span class="cart-badge" id="cart-badge" style="display:none">0</span>
+  </button>
+  <!-- NIVEK LOGO -->
+  <div class="nivek-logo">
+    <div class="nivek-clover">
+      <svg viewBox="0 0 120 120" width="90" height="90" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="cg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#4dd0e1"/>
+            <stop offset="100%" stop-color="#006064"/>
+          </radialGradient>
+        </defs>
+        <!-- 4 petals -->
+        <ellipse cx="60" cy="35" rx="18" ry="28" fill="url(#cg)" opacity="0.85"/>
+        <ellipse cx="60" cy="85" rx="18" ry="28" fill="url(#cg)" opacity="0.85"/>
+        <ellipse cx="35" cy="60" rx="28" ry="18" fill="url(#cg)" opacity="0.85"/>
+        <ellipse cx="85" cy="60" rx="28" ry="18" fill="url(#cg)" opacity="0.85"/>
+        <!-- center circle -->
+        <circle cx="60" cy="60" r="22" fill="#0a0806"/>
+        <!-- N letter -->
+        <text x="60" y="67" text-anchor="middle" font-family="Nunito, sans-serif" font-weight="800" font-size="26" fill="#4dd0e1" letter-spacing="-1">N</text>
+      </svg>
+    </div>
+    <div class="nivek-wordmark">NIVEK</div>
+  </div>
+  <div class="logo-sub">Colección de Perfumes</div>
+  <div class="stats-row">
+    <div class="stat"><span class="stat-num" id="total-count">—</span><span class="stat-label">Fragancias</span></div>
+    <div class="stat"><span class="stat-num" id="brand-count">—</span><span class="stat-label">Marcas</span></div>
+    <div class="stat"><span class="stat-num" id="min-price">—</span><span class="stat-label">Precio mín.</span></div>
+    <div class="stat"><span class="stat-num" id="max-price">—</span><span class="stat-label">Precio máx.</span></div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="filter-group">
+    <span class="filter-label">Categoría</span>
+    <button class="cat-btn active" onclick="setFilter('all')">Todos</button>
+    <button class="cat-btn fem" onclick="setFilter('fem')">♀ Femenino</button>
+    <button class="cat-btn masc" onclick="setFilter('masc')">♂ Masculino</button>
+    <button class="cat-btn uni" onclick="setFilter('uni')">◈ Unisex</button>
+    <button class="cat-btn ext" onclick="setFilter('ext')">✦ Extractos</button>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Ordenar</span>
+    <select class="sort-select" onchange="setSort(this.value)">
+      <option value="default">Por marca</option>
+      <option value="price-asc">Precio: menor a mayor</option>
+      <option value="price-desc">Precio: mayor a menor</option>
+      <option value="name">Nombre A–Z</option>
+    </select>
+  </div>
+  <div class="filter-group price-range">
+    <span class="filter-label">Hasta</span>
+    <input type="range" class="range-input" id="price-range" min="0" max="520000" step="5000" value="520000" oninput="setPriceFilter(this.value)">
+    <span class="range-val" id="price-range-val">Sin límite</span>
+  </div>
+  <input type="search" class="search-box" placeholder="🔍  Buscar perfume o marca..." oninput="setSearch(this.value)">
+</div>
+
+<div class="price-tiers">
+  <div class="tier"><div class="tier-dot" style="background:#7ab58a"></div>Económico &lt;$50k</div>
+  <div class="tier"><div class="tier-dot" style="background:#00bcd4"></div>Estándar $50k–$80k</div>
+  <div class="tier"><div class="tier-dot" style="background:#e8804a"></div>Premium $80k–$150k</div>
+  <div class="tier"><div class="tier-dot" style="background:#c96b8a"></div>Lujo +$150k</div>
+</div>
+
+<div class="results-bar">Mostrando <span class="results-count" id="shown-count">—</span> fragancias · <span style="color:var(--gold-light);font-style:italic">Hacé click en cualquier perfume para ver su descripción completa</span></div>
+
+<div class="main" id="catalog"></div>
+<div class="no-results" id="no-results">Ninguna fragancia coincide con tu búsqueda.</div>
+
+<!-- CART PANEL -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart(event)">
+  <div class="cart-panel" id="cart-panel">
+    <div class="cart-header">
+      <span class="cart-title">🛒 Mi Carrito</span>
+      <button class="cart-close" onclick="closeCartDirect()">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <div class="cart-empty" id="cart-empty">
+        <span style="font-size:2.5rem">🛒</span>
+        <span>Tu carrito está vacío</span>
+      </div>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total</span>
+        <span class="cart-total-price" id="cart-total">$0</span>
+      </div>
+      <button class="cart-checkout-btn" onclick="checkoutWhatsApp()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Consultar todos por WhatsApp
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-accent" id="modal-accent"></div>
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-body" id="modal-body">
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Cargando información...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>✦ &nbsp; Todos los precios en pesos argentinos &nbsp; ✦ &nbsp; Haz click en un perfume para ver su descripción completa</footer>
+
+<script>
+const data = {
+  fem: [
+    {brand:"AFNAN", name:"9am 100ml", price:65000, dupe:"Aqua Vitae Forte - Maison Francis Kurkdjian"},
+    {brand:"AFNAN", name:"9am Pour Femme 100ml", price:75000, dupe:"My Way - Giorgio Armani"},
+    {brand:"AFNAN", name:"9pm Pour Femme 100ml", price:70000, dupe:"Flamenco - Ramon Monegal"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Ultra Violet 120ml", price:125000, dupe:"L'Interdit Eau de Parfum Rouge - Givenchy"},
+    {brand:"AL WATANIAH", name:"Ameerati 100ml", price:50000, dupe:"Ralph Lauren Woman"},
+    {brand:"AL WATANIAH", name:"Durrat al Aroos 85ml", price:50000, dupe:"Xerjoff - Erba Pura"},
+    {brand:"AL WATANIAH", name:"Sabah Al Ward 100ml", price:50000, dupe:"Givenchy - L'Interdit"},
+    {brand:"AL WATANIAH", name:"Sabah Al Ward Sugar 100ml", price:50000, dupe:"Burberry Her"},
+    {brand:"ARMAF", name:"Odyssey Candee 100ml", price:60000, dupe:"Burberry - Her Elixir de Parfum"},
+    {brand:"ARMAF", name:"Club De Nuit Lionheart Woman 100ml", price:75000, dupe:"Goddess - Burberry"},
+    {brand:"ARMAF", name:"Club de Nuit Imperiale 105ml", price:75000, dupe:"Delina Exclusif - Parfums de Marly"},
+    {brand:"ARMAF", name:"Club de Nuit Intense Woman 105ml", price:65000, dupe:"Noir de Noir - Tom Ford"},
+    {brand:"ARMAF", name:"Club de Nuit Maleka 105ml", price:80000, dupe:"Very Good Girl - Carolina Herrera"},
+    {brand:"ARMAF", name:"Club de Nuit Woman 105ml", price:65000, dupe:"Chanel - Coco Mademoiselle"},
+    {brand:"ARMAF", name:"Island Bliss 100ml", price:85000, dupe:"Lattafa - La African Drummer"},
+    {brand:"ARMAF", name:"Yum Yum 100ml", price:85000, dupe:"Carolina Herrera - Very Good Girl Glam Parfum"},
+    {brand:"ASDAAF", name:"Ameerat Al Arab 100ml", price:50000, dupe:"Dior - Poison Girl / CH - Very Good Girl"},
+    {brand:"ASDAAF", name:"Privé Rose 100ml", price:50000, dupe:"Parfums de Marly - Delina Exclusif"},
+    {brand:"BHARARA", name:"Rome pour Femme 100ml", price:75000, dupe:"Valentino Donna Born in Roma"},
+    {brand:"LATTAFA", name:"Angham Second Song 100ml", price:80000, dupe:"My Devotion EDP Intense - Dolce&Gabbana"},
+    {brand:"LATTAFA", name:"Azeezah 100ml", price:45000, dupe:"Good Girl - Carolina Herrera"},
+    {brand:"LATTAFA", name:"Bade Al Oud Noble Blush 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/noble-blush1.jpg", price:55000, dupe:"Good Girl Blush - Carolina Herrera"},
+    {brand:"LATTAFA", name:"Eclaire 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Eclaire%20-%20Lattafa1.jpg", price:65000, dupe:"Bianco Latte - Giardini Di Toscana"},
+    {brand:"LATTAFA", name:"Emaan 100ml", price:55000, dupe:"My Way - Giorgio Armani"},
+    {brand:"LATTAFA", name:"Fakhar Rose 100ml", price:65000, dupe:"L'Interdit - Givenchy"},
+    {brand:"LATTAFA", name:"Haya 100ml", price:45000, dupe:"Prada - Prada"},
+    {brand:"LATTAFA", name:"Hayaati Florence 100ml", price:50000, dupe:"Very Good Girl - Carolina Herrera"},
+    {brand:"LATTAFA", name:"Her Confession 100ml", price:70000, dupe:"Blanche Bête - Les Liquides Imaginaires"},
+    {brand:"LATTAFA", name:"Kit Ansaam Gold", price:80000, dupe:"Oriana - Parfums de Marly"},
+    {brand:"LATTAFA", name:"Kit Yara + Yara Candy", price:97500, dupe:"Dior Poison Girl + Ariana Grande Sweet Like Candy"},
+    {brand:"LATTAFA", name:"Kit Yara Collection x4 25ml", price:88000, dupe:"Colección Yara completa"},
+    {brand:"LATTAFA", name:"Mohra Silky Rose 100ml", price:50000, dupe:"Delina Exclusif - Parfums de Marly"},
+    {brand:"LATTAFA", name:"Qimmah for Women 100ml", price:55000, dupe:"Good Girl - Carolina Herrera"},
+    {brand:"LATTAFA", name:"Shahd 100ml", price:45000, dupe:"Narciso Rodriguez - For Her"},
+    {brand:"LATTAFA", name:"Sugar Plum 100ml", price:45000, dupe:"Delina - Parfums de Marly"},
+    {brand:"LATTAFA", name:"The Kingdom for Her 100ml", price:60000, dupe:"The Wedding Silk Santal | 36 - Kayali"},
+    {brand:"LATTAFA", name:"Thouq 80ml", price:65000, dupe:"Delina Exclusif - Parfums de Marly"},
+    {brand:"LATTAFA", name:"Washwashah 100ml", price:45000, dupe:"Classique - Jean Paul Gaultier"},
+    {brand:"LATTAFA", name:"Wild Vanille 100ml", price:50000, dupe:"Todade - Rochas"},
+    {brand:"LATTAFA", name:"Yara 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Yara%20-%20Lattafa1.jpeg", price:60000, dupe:"Poison Girl - Dior"},
+    {brand:"LATTAFA", name:"Yara Candy 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Yara%20Candy%20-%20Lattafa1.jpg", price:65000, dupe:"Sweet Like Candy - Ariana Grande"},
+    {brand:"LATTAFA", name:"Yara Elixir 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Yara%20Elixir%20-%20Lattafa1.webp", price:60000, dupe:"Marshmallow Blush - Paris Corner"},
+    {brand:"LATTAFA", name:"Yara Moi 100ml", price:60000, dupe:"Perfect Intense - Marc Jacobs"},
+    {brand:"LATTAFA", name:"Yara Tous 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Yara%20Tous%20-%20Lattafa1.webp", price:60000, dupe:"Fame - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Ana Abiyedh Rouge", price:45000, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"MAISON ALHAMBRA", name:"BAD Femme 100ml", price:50000, dupe:"Good Girl - Carolina Herrera"},
+    {brand:"MAISON ALHAMBRA", name:"Intrude 100ml", price:47000, dupe:"L'Interdit Eau de Parfum - Givenchy"},
+    {brand:"MAISON ALHAMBRA", name:"La Rouge Baroque Extreme 100ml", price:55000, dupe:"Baccarat Rouge 540 Extrait - MFK"},
+    {brand:"MAISON ALHAMBRA", name:"La Vivacite Intensa 100ml", price:45000, dupe:"La Vida es Bella Intense"},
+    {brand:"MAISON ALHAMBRA", name:"La Voie 100ml", price:45000, dupe:"My Way - Giorgio Armani"},
+    {brand:"MAISON ALHAMBRA", name:"Leonie 100ml", price:45000, dupe:"Libre - Yves Saint Laurent"},
+    {brand:"MAISON ALHAMBRA", name:"Mia Dolcezza 100ml", price:45000, dupe:"Valentino Donna Born In Roma Intense"},
+    {brand:"MAISON ALHAMBRA", name:"Rose Seduction Vip Pour Femme 100ml", price:50000, dupe:"212 VIP Rosé - Carolina Herrera"},
+    {brand:"MAISON ALHAMBRA", name:"So Candid 100ml", price:45000, dupe:"So Scandal! - Jean Paul Gaultier"},
+    {brand:"MAISON ALHAMBRA", name:"Summer Forever 100ml", price:45000, dupe:"Muse - Xerjoff"},
+    {brand:"MAISON ALHAMBRA", name:"Victoria Flower Orchid 100ml", price:45000, dupe:"Flowerbomb Ruby Orchid - Viktor&Rolf"},
+    {brand:"MAISON ALHAMBRA", name:"Alive Now 30ml", price:25000, dupe:"Angel Nova - Thierry Mugler"},
+    {brand:"MAISON ALHAMBRA", name:"Chic - Velvet Pink Secret 30ml", price:25000, dupe:"Victoria's Secret - Love"},
+    {brand:"MAISON ALHAMBRA", name:"Delilah 30ml", price:25000, dupe:"Delina - Parfums de Marly"},
+    {brand:"MAISON ALHAMBRA", name:"Florenza 30ml", price:25000, dupe:"Flora - Gucci"},
+    {brand:"MAISON ALHAMBRA", name:"Glacier Bella 30ml", price:25000, dupe:"La Belle - JPG"},
+    {brand:"MAISON ALHAMBRA", name:"Jardin de Reve 30ml", price:25000, dupe:"J'adore - Christian Dior"},
+    {brand:"MAISON ALHAMBRA", name:"Jubilant Rose 30ml", price:25000, dupe:"Bright Crystal - Versace"},
+    {brand:"MAISON ALHAMBRA", name:"La Rouge Baroque Extreme 30ml", price:25000, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"MAISON ALHAMBRA", name:"La Vivacité 30ml", price:25000, dupe:"La Vida es Bella - Lancôme"},
+    {brand:"MAISON ALHAMBRA", name:"La Vivacité Intensa 30ml", price:25000, dupe:"La Vida es Bella Intensement - Lancôme"},
+    {brand:"MAISON ALHAMBRA", name:"La Voie 30ml", price:25000, dupe:"My Way - Giorgio Armani"},
+    {brand:"MAISON ALHAMBRA", name:"L'Intrude 30ml", price:25000, dupe:"L'Interdit - Givenchy"},
+    {brand:"MAISON ALHAMBRA", name:"Léonie Intense 30ml", price:25000, dupe:"Libre Intense - YSL"},
+    {brand:"MAISON ALHAMBRA", name:"Olivia 30ml", price:25000, dupe:"Olympea - Paco Rabanne"},
+    {brand:"MAISON ALHAMBRA", name:"Opera Noir 30ml", price:25000, dupe:"Black Opium - YSL"},
+    {brand:"MAISON ALHAMBRA", name:"Pink Shimmer Secret 30ml", price:25000, dupe:"Bombshell - Victoria's Secret"},
+    {brand:"MAISON ALHAMBRA", name:"Reyna 30ml", price:25000, dupe:"Oriana - Parfums de Marly"},
+    {brand:"MAISON ALHAMBRA", name:"So Candid 30ml", price:25000, dupe:"Scandal - JPG"},
+    {brand:"MAISON ALHAMBRA", name:"Summer Forever 30ml", price:25000, dupe:"Muse - Xerjoff"},
+    {brand:"PARIS CORNER", name:"Marshmallow Blush 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/marshmallow-blush1.jpg", price:90000, dupe:"Yum Boujee Marshmallow | 81 - Kayali"},
+    {brand:"RASASI", name:"Hawas Diva 100ml", price:95000, dupe:"Valentino Donna Born In Roma Intense"},
+    {brand:"RASASI", name:"Hawas for Her 100ml", price:60000, dupe:"La Vie Est Belle - Lancôme"},
+    {brand:"RASASI", name:"Hawas for Her Éclat 100ml", price:65000, dupe:"Delina Exclusif - Parfums de Marly"},
+    {brand:"RASASI", name:"Hawas Pink 100ml", price:100000, dupe:"Love Don't Be Shy - By Kilian"},
+    {brand:"RAVE", name:"Now Women 100ml", price:50000, dupe:"Burberry - Her"},
+    {brand:"RAYHAAN", name:"Rayhaan Divine 100ml", price:70000, dupe:"Attrape-Rêves - Louis Vuitton"},
+    {brand:"RAYHAAN", name:"Rayhaan Pretty in Pink", price:65000, dupe:"Idôle - Lancôme / Black Opium - YSL"},
+    {brand:"ZIMAYA", name:"Fátima 100ml", price:55000, dupe:"Delina - Parfums de Marly"},
+    {brand:"ZIMAYA", name:"Hayam 100ml", price:55000, dupe:"Stellar Times - Louis Vuitton"},
+    {brand:"ZIMAYA", name:"Magma Love 100ml", price:50000, dupe:"L'Interdit - Givenchy"},
+    {brand:"ZIMAYA", name:"Only You 100ml", price:60000, dupe:"My Way Parfum - Armani"},
+  ],
+  masc: [
+    {brand:"AFNAN", name:"9pm 100ml", price:65000, dupe:"Jean Paul Gaultier - Le Male Ultra"},
+    {brand:"AFNAN", name:"9pm Rebel 100ml", price:80000, dupe:"Creed Aventus (70%) + Baccarat Rouge 540 (30%)"},
+    {brand:"AFNAN", name:"Turathi Blue 90ml", price:70000, dupe:"Bvlgari - Tygar"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Aqua Dubai 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/amber-oud-aqua-dubai.jpg", price:105000, dupe:"Louis Vuitton - Imagination"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Dubai Night 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Amber%20Oud%20Dubai%20Night%20-%20Al%20Haramain1....jpg", price:95000, dupe:"Montale - Arabians Tonka"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Gold Edition 120ml", price:110000, dupe:"Xerjoff - Erba Pura"},
+    {brand:"AL WATANIAH", name:"Attar al Wesal 100ml", price:50000, dupe:"Jean Paul Gaultier - Ultra Male"},
+    {brand:"AL WATANIAH", name:"Kenz Al Malik 100ml", price:50000, dupe:"Versace - Dylan Blue"},
+    {brand:"ARMAF", name:"Club de Nuit Iconic 105ml", price:85000, dupe:"Bleu de Chanel Eau de Parfum"},
+    {brand:"ARMAF", name:"Club de Nuit Intense Man 105ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/club-de-nuit-intense-man1.jpg", price:90000, dupe:"Creed - Aventus"},
+    {brand:"ARMAF", name:"Club De Nuit Lionheart Man 100ml", price:85000, dupe:"Le Male Elixir - Jean Paul Gaultier"},
+    {brand:"ARMAF", name:"Club de Nuit Urban Elixir 105ml", price:75000, dupe:"Dior - Sauvage"},
+    {brand:"ARMAF", name:"Odyssey Aqua Edition 100ml", price:75000, dupe:"Invictus Platinum - Rabanne"},
+    {brand:"ARMAF", name:"Odyssey Homme White Edition 100ml", price:60000, dupe:"Emporio Armani - Stronger with YOU"},
+    {brand:"ARMAF", name:"Odyssey Mandarin Sky 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/mandarin-sky1.webp", price:65000, dupe:"Jean Paul Gaultier - Scandal"},
+    {brand:"ARMAF", name:"Odyssey Mega 100ml", price:60000, dupe:"Yves Saint Laurent - Y"},
+    {brand:"ARMAF", name:"Aoud", price:20000, dupe:"Oud for Greatness - Initio"},
+    {brand:"ARMAF", name:"Aqua", price:20000, dupe:"Invictus Platinum - Paco Rabanne"},
+    {brand:"ARMAF", name:"Club de Nuit Intense Man", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/club-de-nuit1.jpg", price:20000, dupe:"Creed - Aventus"},
+    {brand:"ARMAF", name:"Homme White Edition", price:20000, dupe:"Stronger with YOU - Emporio Armani"},
+    {brand:"ARMAF", name:"Homme for Men", price:20000, dupe:"Noir Extreme - Tom Ford"},
+    {brand:"ARMAF", name:"Mandarin Sky", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/mandarin-sky1.webp", price:20000, dupe:"Scandal - Jean Paul Gaultier"},
+    {brand:"ARMAF", name:"Mandarin Sky Elixir", price:20000, dupe:"Scandal Pour Homme Le Parfum - JPG"},
+    {brand:"BHARARA", name:"Bharara King 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/bharara-king1.webp", price:110000, dupe:"Xerjoff - Erba Pura"},
+    {brand:"BHARARA", name:"Bharara Ramesses I 100ml", price:185000, dupe:"Luxor - Xerjoff"},
+    {brand:"BHARARA", name:"Bharara Rome Imagine 100ml", price:80000, dupe:"Imagination - Louis Vuitton"},
+    {brand:"BHARARA", name:"Bharara Rome pour Homme 100ml", price:80000, dupe:"Valentino Uomo Born in Roma"},
+    {brand:"LATTAFA", name:"24 Carat Pure Gold 100ml", price:55000, dupe:"1 Million Parfum - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Al Dur Al Maknoon 100ml", price:50000, dupe:"Creed - Aventus"},
+    {brand:"LATTAFA", name:"Ameer Al Oudh Intense Oud 100ml", price:50000, dupe:"Maison Margiela - the Fire Place"},
+    {brand:"LATTAFA", name:"Asad Bourbon 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Asad%20-%20Lattafa1.webp", price:75000, dupe:"Azzaro Most Wanted + Valentino Born in Roma Uomo"},
+    {brand:"LATTAFA", name:"Asad Elixir 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Asad%20Elixir%20-%20Lattafa1.webp", price:80000, dupe:"Bottled Absolu - Hugo Boss"},
+    {brand:"LATTAFA", name:"Asad Negro 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Asad%20-%20Lattafa1.webp", price:60000, dupe:"Dior - Sauvage Elixir"},
+    {brand:"LATTAFA", name:"Asad Zanzibar 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Asad%20-%20Lattafa1.webp", price:55000, dupe:"Le Beau Le Parfum - Jean Paul Gaultier"},
+    {brand:"LATTAFA", name:"Bade Al Oud Oud for Glory 100ml", price:60000, dupe:"Oud for Greatness - Initio"},
+    {brand:"LATTAFA", name:"Fakhar Black 100ml", price:65000, dupe:"Yves Saint Laurent - Y"},
+    {brand:"LATTAFA", name:"Fakhar Extrait 100ml", price:55000, dupe:"1 Million Parfum - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Hayaati Black 100ml", price:50000, dupe:"Paco Rabanne - Invictus Aqua"},
+    {brand:"LATTAFA", name:"His Confession 100ml", price:70000, dupe:"Gentleman Eau de Parfum - Givenchy"},
+    {brand:"LATTAFA", name:"Khaltaat Al Arabia Royal Blends 100ml", price:55000, dupe:"Byredo - Pulp"},
+    {brand:"LATTAFA", name:"Khaltaat Al Arabia Royal Delight 100ml", price:50000, dupe:"Coach - Coach for Men"},
+    {brand:"LATTAFA", name:"Kit Asad + Asad Zanzibar", price:105000, dupe:"Sauvage Elixir Dior + The Omniscient Mr Thompson"},
+    {brand:"LATTAFA", name:"Kit Pisa", price:95000, dupe:"Jean Lowe Azure - Maison Alhambra"},
+    {brand:"LATTAFA", name:"Lail maleki 100ml", price:50000, dupe:"Gucci Bloom Intense"},
+    {brand:"LATTAFA", name:"Lail Maleki Moroccan Blue 100ml", price:50000, dupe:"Versace - Dylan Blue"},
+    {brand:"LATTAFA", name:"Mohra 100ml", price:50000, dupe:"Penhaligon's - Halfeti Cedar"},
+    {brand:"LATTAFA", name:"Oud Lail Maleki 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/oud-for-glory1.webp", price:50000, dupe:"Boss Bottled Oud Saffron - Hugo Boss"},
+    {brand:"LATTAFA", name:"Pisa 100ml", price:80000, dupe:"Jean Lowe Azure - Maison Alhambra"},
+    {brand:"LATTAFA", name:"Qaed Al Fursan 90ml", price:50000, dupe:"Paco Rabanne - Black XS"},
+    {brand:"LATTAFA", name:"Qaed Al Fursan Unlimited 90ml", price:50000, dupe:"Le Beau le Parfum - Jean Paul Gaultier"},
+    {brand:"LATTAFA", name:"Serh 100ml", price:70000, dupe:"Tom Ford - Vanilla Sex"},
+    {brand:"LATTAFA", name:"The Kingdom Men 100ml", price:80000, dupe:"Le Male Elixir - Jean Paul Gaultier"},
+    {brand:"LATTAFA", name:"Velvet Oud 100ml", price:55000, dupe:"Tom Ford - Ombre Leather"},
+    {brand:"LATTAFA", name:"Asad", price:20000, dupe:"Dior - Sauvage Elixir"},
+    {brand:"LATTAFA", name:"Asad Bourbon", price:20000, dupe:"Azzaro Most Wanted + Valentino Born in Roma Uomo"},
+    {brand:"LATTAFA", name:"Asad Zanzibar", price:20000, dupe:"Le Beau Le Parfum - Jean Paul Gaultier"},
+    {brand:"LATTAFA", name:"Hayaati Black", price:20000, dupe:"Invictus Aqua - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Oud for Glory", price:20000, dupe:"Oud for Greatness - Initio"},
+    {brand:"MAISON ALHAMBRA", name:"Avant 100ml", price:50000, dupe:"Aventus - Creed"},
+    {brand:"MAISON ALHAMBRA", name:"BAD Homme 100ml", price:60000, dupe:"Bad Boy - Carolina Herrera"},
+    {brand:"MAISON ALHAMBRA", name:"Glacier Gold 100ml", price:65000, dupe:"Le Male Elixir - JPG"},
+    {brand:"MAISON ALHAMBRA", name:"Jean Lowe Immortal 100ml", price:65000, dupe:"L'Immensité - Louis Vuitton"},
+    {brand:"MAISON ALHAMBRA", name:"Jorge Di Profumo Deep Blue 100ml", price:50000, dupe:"Acqua Di Gio Profondo - Giorgio Armani"},
+    {brand:"MAISON ALHAMBRA", name:"No. 2 Men 100ml", price:50000, dupe:"212 Men - Carolina Herrera"},
+    {brand:"MAISON ALHAMBRA", name:"Salvo 100ml", price:55000, dupe:"Christian Dior - Sauvage"},
+    {brand:"MAISON ALHAMBRA", name:"Salvo Intense 100ml", price:55000, dupe:"Christian Dior - Sauvage"},
+    {brand:"MAISON ALHAMBRA", name:"Victorioso 100ml", price:50000, dupe:"Invictus - Rabanne"},
+    {brand:"MAISON ALHAMBRA", name:"Yeah! Man 100ml", price:60000, dupe:"Y Eau de Parfum - Yves Saint Laurent"},
+    {brand:"MAISON ALHAMBRA", name:"Avant 30ml", price:25000, dupe:"Creed - Adventus"},
+    {brand:"MAISON ALHAMBRA", name:"BAD Homme 30ml", price:25000, dupe:"Bad Boy - Carolina Herrera"},
+    {brand:"MAISON ALHAMBRA", name:"Glacier Gold 30ml", price:25000, dupe:"Le Male Elixir - JPG"},
+    {brand:"MAISON ALHAMBRA", name:"Glacier Ultra 30ml", price:25000, dupe:"Ultra Male - JPG"},
+    {brand:"MAISON ALHAMBRA", name:"Jean Lowe 30ml", price:25000, dupe:"L'Immensité - Louis Vuitton"},
+    {brand:"MAISON ALHAMBRA", name:"Jorge Di Profumo 30ml", price:25000, dupe:"Acqua Di Gio Profumo - Giorgio Armani"},
+    {brand:"MAISON ALHAMBRA", name:"Jorge Di Profumo Deep Blue 30ml", price:25000, dupe:"Acqua Di Gio Profondo - Giorgio Armani"},
+    {brand:"MAISON ALHAMBRA", name:"Jubilant Oro 30ml", price:25000, dupe:"Eros - Versace"},
+    {brand:"MAISON ALHAMBRA", name:"Man Black Edition 30ml", price:25000, dupe:"Legend - Mont Blanc"},
+    {brand:"MAISON ALHAMBRA", name:"Panther 30ml", price:25000, dupe:"Phantom - Paco Rabanne"},
+    {brand:"MAISON ALHAMBRA", name:"Perseus Exclusif 30ml", price:25000, dupe:"Pegasus Exclusif - Parfums de Marly"},
+    {brand:"MAISON ALHAMBRA", name:"Victorioso Nero 30ml", price:25000, dupe:"Invictus Victory - Paco Rabanne"},
+    {brand:"MAISON ALHAMBRA", name:"Your Touch 30ml", price:25000, dupe:"Stronger with YOU - Armani"},
+    {brand:"PARIS CORNER", name:"Champion Money 80ml", price:80000, dupe:"Le Male Elixir - Jean Paul Gaultier"},
+    {brand:"PARIS CORNER", name:"Champion Sugar 80ml", price:80000, dupe:"Versace - Eros"},
+    {brand:"PARIS CORNER", name:"Liquid Brun 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/liquid-brun1.jpeg", price:100000, dupe:"Althair - Parfums de Marly"},
+    {brand:"PARIS CORNER", name:"Spectre Ghost 80ml", price:90000, dupe:"Ani - Nishane"},
+    {brand:"PARIS CORNER", name:"Vulcan Black Friday 100ml", price:85000, dupe:"Deified Tony Iommi Parfum - Xerjoff"},
+    {brand:"RASASI", name:"Hawas Black 100ml", price:65000, dupe:"Hacivat - Nishane"},
+    {brand:"RASASI", name:"Hawas for Him 100ml", price:65000, dupe:"Paco Rabanne - Invictus"},
+    {brand:"RASASI", name:"Hawas ICE 100ml", price:85000, dupe:"Invictus Aqua - Paco Rabanne"},
+    {brand:"RASASI", name:"Hawas Kobra 100ml", price:95000, dupe:"Imagination - Louis Vuitton"},
+    {brand:"RASASI", name:"Hawas Tropical 100ml", price:95000, dupe:"Le Beau Paradise Garden - Jean Paul Gaultier"},
+    {brand:"RASASI", name:"Hawas Verde 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Torino%2021%20-%20Xerjoff1.jpg", price:90000, dupe:"Torino21 - Xerjoff"},
+    {brand:"RAVE", name:"Now Black 100ml", price:50000, dupe:"Creed - Aventus"},
+    {brand:"RAYHAAN", name:"Rayhaan Italia 100ml", price:70000, dupe:"XJ 1861 Naxos - Xerjoff"},
+    {brand:"RAYHAAN", name:"Rayhaan Nocturno 100ml", price:70000, dupe:"Angels' Share - By Kilian"},
+    {brand:"RAYHAAN", name:"Rayhaan Ocean Rush 100ml", price:65000, dupe:"Allure Homme Sport - Chanel"},
+    {brand:"RAYHAAN", name:"Rayhaan Pacific 100ml", price:65000, dupe:"Hawas for Him - Rasasi"},
+    {brand:"RAYHAAN", name:"Rayhaan Valhalla 100ml", price:70000, dupe:"Angels' Share - By Kilian"},
+  ],
+
+  ext: [
+    // ── NUEVOS INGRESOS 60ml ─────────────────────────────────────────────
+    {brand:"AFNAN", name:"9pm Night Out 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/9pm-night-out.jpg", price:0, dupe:"Forever Wanted Elixir - Azzaro"},
+    {brand:"PARFUMS DE MARLY", name:"Althair 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/althair.jpg", price:0, dupe:"Althair - Parfums de Marly"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Aqua Dubai 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/amber-oud-aqua-dubai.jpg", price:0, dupe:"Imagination - Louis Vuitton"},
+    {brand:"ARMAF", name:"Club de Nuit Bling 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/club-de-nuit-bling1.webp", price:0, dupe:"Eau Mo Pour Gay - Hedoné"},
+    {brand:"DOLCE & GABBANA", name:"Devotion Intense 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/devotion-intense1.jpg", price:0, dupe:""},
+    {brand:"ARMAF", name:"GO Mango 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/go-mango1.webp", price:0, dupe:"God of Fire - SHL 777"},
+    {brand:"FRENCH AVENUE", name:"Liquid Brun 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/liquid-brun1.jpeg", price:0, dupe:"Althair - Parfums de Marly"},
+    {brand:"PARIS CORNER", name:"Marshmallow Blush 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/marshmallow-blush1.jpg", price:0, dupe:"Yum Boujee Marshmallow - Kayali"},
+    {brand:"XERJOFF", name:"Naxos 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/naxos1.jpg", price:0, dupe:"A*Men Pure Havane - Mugler"},
+    {brand:"LATTAFA", name:"Noble Blush 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/noble-blush1.jpg", price:0, dupe:"Good Girl Blush - Carolina Herrera"},
+    {brand:"XERJOFF", name:"Torino 21 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Torino%2021%20-%20Xerjoff1.jpg", price:0, dupe:"Torino21 - Xerjoff"},
+    {brand:"VALENTINO", name:"Valentino Donna Born in Roma 60ml", price:0, dupe:""},
+    {brand:"VALENTINO", name:"Valentino Uomo Born in Roma Intense 60ml", price:0, dupe:""},
+    // ── FEMENINOS 60ml ───────────────────────────────────────────────────
+    {brand:"CAROLINA HERRERA", name:"212 Héroes 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"212 New York 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"212 Sexy 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"212 Vip 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"212 Vip Rosé 60ml", price:0, dupe:"212 VIP Rosé - Carolina Herrera"},
+    {brand:"GIORGIO ARMANI", name:"Acqua Di Gio 60ml (fem)", price:0, dupe:""},
+    {brand:"GIORGIO ARMANI", name:"Acqua Di Gioia 60ml", price:0, dupe:""},
+    {brand:"THIERRY MUGLER", name:"Alien 60ml", price:0, dupe:""},
+    {brand:"THIERRY MUGLER", name:"Alien Goddess 60ml", price:0, dupe:""},
+    {brand:"GIVENCHY", name:"Amarige 60ml", price:0, dupe:""},
+    {brand:"CACHAREL", name:"Amor Amor 60ml", price:0, dupe:""},
+    {brand:"KENZO", name:"Amour 60ml", price:0, dupe:""},
+    {brand:"CACHAREL", name:"Anaïs-Anaïs 60ml", price:0, dupe:""},
+    {brand:"GIVENCHY", name:"Ange ou Demon 60ml", price:0, dupe:""},
+    {brand:"THIERRY MUGLER", name:"Angel 60ml", price:0, dupe:""},
+    {brand:"THIERRY MUGLER", name:"Angel Nova 60ml", price:0, dupe:""},
+    {brand:"ARMANI", name:"Armani Code 60ml (fem)", price:0, dupe:""},
+    {brand:"DKNY", name:"Be Delicious 60ml (fem)", price:0, dupe:""},
+    {brand:"EMPORIO ARMANI", name:"Because It's You 60ml", price:0, dupe:""},
+    {brand:"YVES SAINT LAURENT", name:"Black Opium 60ml", price:0, dupe:"Black Opium - YSL"},
+    {brand:"PACO RABANNE", name:"Black XS 60ml (fem)", price:0, dupe:""},
+    {brand:"VICTORIA'S SECRET", name:"Bombshell Night 60ml", price:0, dupe:""},
+    {brand:"VIKTOR & ROLF", name:"Bonbon 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"CH 60ml (fem)", price:0, dupe:""},
+    {brand:"CHANEL", name:"Chanel N°5 60ml", price:0, dupe:""},
+    {brand:"ARIANA GRANDE", name:"Cloud 60ml", price:0, dupe:""},
+    {brand:"DAVIDOFF", name:"Cool Water 60ml (fem)", price:0, dupe:""},
+    {brand:"PARFUMS DE MARLY", name:"Delina 60ml", price:0, dupe:"Delina - Parfums de Marly"},
+    {brand:"J.P. GAULTIER", name:"Divine 60ml", price:0, dupe:""},
+    {brand:"VERSACE", name:"Eros 60ml (fem)", price:0, dupe:""},
+    {brand:"CALVIN KLEIN", name:"Eternity 60ml (fem)", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"Fame 60ml", price:0, dupe:"Fame - Paco Rabanne"},
+    {brand:"PACO RABANNE", name:"Fame Parfum 60ml", price:0, dupe:""},
+    {brand:"BRITNEY SPEARS", name:"Fantasy 60ml", price:0, dupe:""},
+    {brand:"KENZO", name:"Flower 60ml", price:0, dupe:""},
+    {brand:"VIKTOR & ROLF", name:"Flowerbomb 60ml", price:0, dupe:"Flowerbomb Ruby Orchid - Viktor&Rolf"},
+    {brand:"CAROLINA HERRERA", name:"Good Girl Glorius Gold 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"Good Girl 60ml", price:0, dupe:"Good Girl - Carolina Herrera"},
+    {brand:"CAROLINA HERRERA", name:"Good Girl Blush 60ml", price:0, dupe:"Good Girl Blush - Carolina Herrera"},
+    {brand:"CAROLINA HERRERA", name:"Good Girl Supreme 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"Good Girl Very 60ml", price:0, dupe:""},
+    {brand:"J. DEL POZO", name:"Halloween 60ml", price:0, dupe:""},
+    {brand:"CHRISTIAN DIOR", name:"Hypnotic Poison 60ml", price:0, dupe:""},
+    {brand:"LANCOME", name:"Idôle 60ml", price:0, dupe:"Idôle - Lancôme"},
+    {brand:"GIVENCHY", name:"Irresistible 60ml", price:0, dupe:""},
+    {brand:"CHRISTIAN DIOR", name:"J'adore 60ml", price:0, dupe:"J'adore - Christian Dior"},
+    {brand:"ISSEY MIYAKE", name:"L'Eau D'Issey 60ml (fem)", price:0, dupe:""},
+    {brand:"GIVENCHY", name:"L'Interdit 60ml", price:0, dupe:"L'Interdit - Givenchy"},
+    {brand:"GIVENCHY", name:"L'Interdit Rouge 60ml", price:0, dupe:"L'Interdit Rouge - Givenchy"},
+    {brand:"CAROLINA HERRERA", name:"La Bomba 60ml", price:0, dupe:""},
+    {brand:"LANCOME", name:"La Vida es Bella 60ml", price:0, dupe:"La Vida es Bella - Lancôme"},
+    {brand:"LANCOME", name:"La Vida es Bella Intense 60ml", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"Lady Million 60ml", price:0, dupe:""},
+    {brand:"YVES SAINT LAURENT", name:"Libre 60ml", price:0, dupe:"Libre - YSL"},
+    {brand:"DOLCE & GABBANA", name:"Light Blue 60ml (fem)", price:0, dupe:""},
+    {brand:"CHRISTIAN DIOR", name:"Miss Dior 60ml", price:0, dupe:""},
+    {brand:"ARMANI", name:"My Way 60ml", price:0, dupe:"My Way - Giorgio Armani"},
+    {brand:"ARMANI", name:"My Way Intense 60ml", price:0, dupe:""},
+    {brand:"NINA RICCI", name:"Nina 60ml", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"Olympea 60ml", price:0, dupe:"Olympea - Paco Rabanne"},
+    {brand:"CALVIN KLEIN", name:"One Shock 60ml (fem)", price:0, dupe:""},
+    {brand:"CHRISTIAN DIOR", name:"Poison 60ml", price:0, dupe:""},
+    {brand:"CHRISTIAN DIOR", name:"Poison Girl 60ml", price:0, dupe:"Poison Girl - Dior"},
+    {brand:"PACO RABANNE", name:"Pure XS 60ml (fem)", price:0, dupe:""},
+    {brand:"RALPH LAUREN", name:"Ralph 60ml", price:0, dupe:""},
+    {brand:"RALPH LAUREN", name:"Ralph Blue 60ml", price:0, dupe:""},
+    {brand:"NINA RICCI", name:"Ricci Ricci 60ml", price:0, dupe:""},
+    {brand:"J.P. GAULTIER", name:"Scandal 60ml (fem)", price:0, dupe:"Scandal - JPG"},
+    {brand:"J.P. GAULTIER", name:"Scandal Gold 60ml", price:0, dupe:""},
+    {brand:"J.P. GAULTIER", name:"Scandal Le Parfum 60ml", price:0, dupe:""},
+    {brand:"SHAKIRA", name:"Shakira Elixir 60ml", price:0, dupe:""},
+    {brand:"SHAKIRA", name:"Shakira Rock 60ml", price:0, dupe:""},
+    {brand:"ARMANI", name:"Sì 60ml", price:0, dupe:""},
+    {brand:"VICTORIA'S SECRET", name:"Summer Daze 60ml", price:0, dupe:""},
+    {brand:"ARIANA GRANDE", name:"Sweet Like Candy 60ml", price:0, dupe:"Sweet Like Candy - Ariana Grande"},
+    {brand:"DOLCE & GABBANA", name:"The One 60ml (fem)", price:0, dupe:""},
+    {brand:"DOLCE & GABBANA", name:"The Only One 60ml", price:0, dupe:""},
+    {brand:"TOMMY HILFIGER", name:"Tommy Girl 60ml", price:0, dupe:""},
+    {brand:"MOSCHINO", name:"Toy 2 60ml", price:0, dupe:""},
+    {brand:"MOSCHINO", name:"Toy 2 Bubble Gum 60ml", price:0, dupe:""},
+    {brand:"LANCOME", name:"Trésor Le Nuit 60ml", price:0, dupe:""},
+    {brand:"GIVENCHY", name:"Very Irresistible 60ml", price:0, dupe:""},
+    {brand:"VICTORIA'S SECRET", name:"Very Sexy 60ml", price:0, dupe:""},
+    // ── MASCULINOS 60ml ──────────────────────────────────────────────────
+    {brand:"CAROLINA HERRERA", name:"212 Heroes 60ml (masc)", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"212 New York 60ml (masc)", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"212 Sexy 60ml (masc)", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"212 Vip 60ml (masc)", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"212 Vip Black 60ml", price:0, dupe:""},
+    {brand:"THIERRY MUGLER", name:"A Men 60ml", price:0, dupe:""},
+    {brand:"GIORGIO ARMANI", name:"Acqua Di Gio 60ml (masc)", price:0, dupe:""},
+    {brand:"GIORGIO ARMANI", name:"Acqua Di Gio Profondo 60ml", price:0, dupe:"Acqua Di Gio Profondo - Giorgio Armani"},
+    {brand:"GIORGIO ARMANI", name:"Acqua Di Gio Profumo 60ml", price:0, dupe:""},
+    {brand:"CHANEL", name:"Allure Sport 60ml", price:0, dupe:"Allure Homme Sport - Chanel"},
+    {brand:"ARMANI", name:"Armani Code 60ml (masc)", price:0, dupe:""},
+    {brand:"ARMANI", name:"Armani Code Profumo 60ml", price:0, dupe:""},
+    {brand:"AZZARO", name:"Azzaro 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"Bad Boy 60ml", price:0, dupe:"Bad Boy - Carolina Herrera"},
+    {brand:"CAROLINA HERRERA", name:"Bad Boy Cobalt 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"Bad Boy Dazzling Garden 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"Bad Boy Extreme 60ml", price:0, dupe:""},
+    {brand:"DKNY", name:"Be Delicious 60ml (masc)", price:0, dupe:""},
+    {brand:"CHANEL", name:"Bleu de Chanel 60ml", price:0, dupe:"Bleu de Chanel - Chanel"},
+    {brand:"ANTONIO BANDERAS", name:"Blue Seduction 60ml", price:0, dupe:""},
+    {brand:"VALENTINO", name:"Born in Roma 60ml", price:0, dupe:"Valentino Uomo Born in Roma"},
+    {brand:"HUGO BOSS", name:"Boss Bottled 60ml", price:0, dupe:""},
+    {brand:"HUGO BOSS", name:"Boss The Scent Elixir 60ml", price:0, dupe:""},
+    {brand:"BVLGARI", name:"Bvlgari Man in Black 60ml", price:0, dupe:""},
+    {brand:"CAROLINA HERRERA", name:"CH 60ml (masc)", price:0, dupe:""},
+    {brand:"DAVIDOFF", name:"Cool Water 60ml (masc)", price:0, dupe:""},
+    {brand:"CREED", name:"Creed Aventus 60ml", price:0, dupe:"Creed - Aventus"},
+    {brand:"CHRISTIAN DIOR", name:"Dior Homme 60ml", price:0, dupe:""},
+    {brand:"CHRISTIAN DIOR", name:"Dior Homme Intense 60ml", price:0, dupe:""},
+    {brand:"VERSACE", name:"Dylan Blue 60ml", price:0, dupe:"Dylan Blue - Versace"},
+    {brand:"VERSACE", name:"Eros 60ml (masc)", price:0, dupe:"Eros - Versace"},
+    {brand:"VERSACE", name:"Eros Flame 60ml", price:0, dupe:""},
+    {brand:"CHRISTIAN DIOR", name:"Fahrenheit 60ml", price:0, dupe:""},
+    {brand:"GIVENCHY", name:"Gentleman Only 60ml", price:0, dupe:""},
+    {brand:"GIVENCHY", name:"Gentleman Réserve Privée 60ml", price:0, dupe:""},
+    {brand:"GUCCI", name:"Guilty Black 60ml", price:0, dupe:""},
+    {brand:"HUGO BOSS", name:"Hugo Boss 60ml", price:0, dupe:""},
+    {brand:"ANTONIO BANDERAS", name:"Icon 60ml", price:0, dupe:""},
+    {brand:"LOUIS VUITTON", name:"Imagination 60ml", price:0, dupe:"Imagination - Louis Vuitton"},
+    {brand:"PACO RABANNE", name:"Invictus 60ml", price:0, dupe:"Invictus - Paco Rabanne"},
+    {brand:"PACO RABANNE", name:"Invictus Aqua 60ml", price:0, dupe:"Invictus Aqua - Paco Rabanne"},
+    {brand:"PACO RABANNE", name:"Invictus Legend 60ml", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"Invictus Platinum 60ml", price:0, dupe:"Invictus Platinum - Paco Rabanne"},
+    {brand:"PACO RABANNE", name:"Invictus Victory 60ml", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"Invictus Victory Elixir 60ml", price:0, dupe:""},
+    {brand:"KENZO", name:"Kenzo Homme 60ml", price:0, dupe:""},
+    {brand:"KENZO", name:"Kenzo Homme Night 60ml", price:0, dupe:""},
+    {brand:"ANTONIO BANDERAS", name:"King of Seduction 60ml", price:0, dupe:""},
+    {brand:"ISSEY MIYAKE", name:"L'Eau D'Issey 60ml (masc)", price:0, dupe:""},
+    {brand:"J.P. GAULTIER", name:"Le Beau 60ml", price:0, dupe:""},
+    {brand:"J.P. GAULTIER", name:"Le Male 60ml", price:0, dupe:"Le Male - JPG"},
+    {brand:"J.P. GAULTIER", name:"Le Male Elixir 60ml", price:0, dupe:"Le Male Elixir - JPG"},
+    {brand:"J.P. GAULTIER", name:"Le Male Parfum 60ml", price:0, dupe:""},
+    {brand:"DOLCE & GABBANA", name:"Light Blue 60ml (masc)", price:0, dupe:""},
+    {brand:"YVES SAINT LAURENT", name:"MYSLF 60ml", price:0, dupe:""},
+    {brand:"TOM FORD", name:"Noir Extreme 60ml", price:0, dupe:"Noir Extreme - Tom Ford"},
+    {brand:"TOM FORD", name:"Ombre Leather 60ml", price:0, dupe:"Ombre Leather - Tom Ford"},
+    {brand:"LOUIS VUITTON", name:"Ombre Nomade 60ml", price:0, dupe:"Ombre Nomade - Louis Vuitton"},
+    {brand:"PACO RABANNE", name:"One Million 60ml", price:0, dupe:"One Million - Paco Rabanne"},
+    {brand:"PACO RABANNE", name:"One Million Elixir 60ml", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"One Million Lucky 60ml", price:0, dupe:"One Million Lucky - Paco Rabanne"},
+    {brand:"TOM FORD", name:"Oud Wood 60ml", price:0, dupe:""},
+    {brand:"J.P. GAULTIER", name:"Paradise Garden 60ml", price:0, dupe:"Le Beau Paradise Garden - JPG"},
+    {brand:"PACO RABANNE", name:"Phantom 60ml", price:0, dupe:"Phantom - Paco Rabanne"},
+    {brand:"PACO RABANNE", name:"Phantom Parfum 60ml", price:0, dupe:""},
+    {brand:"RALPH LAUREN", name:"Polo 60ml", price:0, dupe:""},
+    {brand:"RALPH LAUREN", name:"Polo Black 60ml", price:0, dupe:""},
+    {brand:"RALPH LAUREN", name:"Polo Blue 60ml", price:0, dupe:""},
+    {brand:"RALPH LAUREN", name:"Polo Red 60ml", price:0, dupe:""},
+    {brand:"RALPH LAUREN", name:"Polo Sport 60ml", price:0, dupe:""},
+    {brand:"RALPH LAUREN", name:"Polo Ultra Blue 60ml", price:0, dupe:""},
+    {brand:"ANTONIO BANDERAS", name:"Power of Seduction 60ml", price:0, dupe:""},
+    {brand:"CHRISTIAN DIOR", name:"Sauvage 60ml", price:0, dupe:"Sauvage - Christian Dior"},
+    {brand:"CHRISTIAN DIOR", name:"Sauvage Elixir 60ml", price:0, dupe:"Sauvage Elixir - Dior"},
+    {brand:"J.P. GAULTIER", name:"Scandal Pour Homme 60ml", price:0, dupe:""},
+    {brand:"J.P. GAULTIER", name:"Scandal Pour Homme Absolu 60ml", price:0, dupe:""},
+    {brand:"CALVIN KLEIN", name:"Shock 60ml (masc)", price:0, dupe:""},
+    {brand:"TOM FORD", name:"Soleil Blanc 60ml", price:0, dupe:""},
+    {brand:"VIKTOR & ROLF", name:"Spicebomb 60ml", price:0, dupe:""},
+    {brand:"GIORGIO ARMANI", name:"Stronger With You 60ml", price:0, dupe:"Stronger with YOU - Armani"},
+    {brand:"GIORGIO ARMANI", name:"Stronger With You Intensely 60ml", price:0, dupe:""},
+    {brand:"AZZARO", name:"The Most Wanted 60ml", price:0, dupe:""},
+    {brand:"DOLCE & GABBANA", name:"The One 60ml (masc)", price:0, dupe:""},
+    {brand:"TOM FORD", name:"Tobacco Vanille 60ml", price:0, dupe:"Tobacco Vanille - Tom Ford"},
+    {brand:"TOMMY HILFIGER", name:"Tommy Hilfiger 60ml", price:0, dupe:""},
+    {brand:"MOSCHINO", name:"Toy Boy 60ml", price:0, dupe:""},
+    {brand:"J.P. GAULTIER", name:"Ultra Male 60ml", price:0, dupe:"Ultra Male - JPG"},
+    {brand:"AZZARO", name:"Wanted 60ml", price:0, dupe:""},
+    {brand:"AZZARO", name:"Wanted By Night 60ml", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"XS Aphrodisiaque 60ml", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"XS Black 60ml", price:0, dupe:""},
+    {brand:"PACO RABANNE", name:"XS Pure 60ml", price:0, dupe:""},
+    {brand:"YVES SAINT LAURENT", name:"Y Eau de Parfum 60ml", price:0, dupe:"Y - YSL"},
+    // ── UNISEX 60ml ──────────────────────────────────────────────────────
+    {brand:"BY KILIAN", name:"Angel's Share 60ml", price:0, dupe:"Angel's Share - By Kilian"},
+    {brand:"MAISON FRANCIS KURKDJIAN", name:"Baccarat Rouge 540 60ml", price:0, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"CALVIN KLEIN", name:"CK One 60ml", price:0, dupe:""},
+    {brand:"TOM FORD", name:"Costa Azzurra 60ml", price:0, dupe:""},
+    // ── ARABES FEMENINOS 60ml ────────────────────────────────────────────
+    {brand:"KAJAL", name:"Dahab 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Dahab%20-%20Kajal1.jpg", price:0, dupe:""},
+    {brand:"LATTAFA", name:"Eclaire 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Eclaire%20-%20Lattafa1.jpg", price:0, dupe:"Bianco Latte - Giardini Di Toscana"},
+    {brand:"LATTAFA", name:"Mayar Cherry Intense 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Mayar%20Cherry%20Intense%20-%20Lattafa1.webp", price:0, dupe:"Acqua di Gioia - Giorgio Armani"},
+    {brand:"LATTAFA", name:"Opulent Musk 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Opulent%20Musk%20-%20Lattafa1.jpg", price:0, dupe:""},
+    {brand:"LATTAFA", name:"Sakeena 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Sakeena%20-%20Lattafa1.webp", price:0, dupe:""},
+    {brand:"LATTAFA", name:"Yara 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Yara%20-%20Lattafa1.jpeg", price:0, dupe:"Poison Girl - Dior"},
+    {brand:"LATTAFA", name:"Yara Candy 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Yara%20Candy%20-%20Lattafa1.jpg", price:0, dupe:"Sweet Like Candy - Ariana Grande"},
+    {brand:"LATTAFA", name:"Yara Elixir 60ml", price:0, dupe:"Marshmallow Blush - Paris Corner"},
+    {brand:"LATTAFA", name:"Yara Tous 60ml", price:0, dupe:"Fame - Paco Rabanne"},
+    {brand:"KAYALI", name:"Yum Marshmallow 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Yum%20Marshmallow%20-%20Kayali1.jpg", price:0, dupe:""},
+    // ── ARABES MASCULINOS 60ml ───────────────────────────────────────────
+    {brand:"ARMAF", name:"9pm 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/9%20pm%20-%20Armaf1.jpg", price:0, dupe:"Le Male Ultra - JPG"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Dubai Night 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Amber%20Oud%20Dubai%20Night%20-%20Al%20Haramain1....jpg", price:0, dupe:"Arabians Tonka - Montale"},
+    {brand:"LATTAFA", name:"Asad 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/Asad%20-%20Lattafa1.webp", price:0, dupe:"Sauvage Elixir - Dior"},
+    {brand:"LATTAFA", name:"Asad Bourbon 60ml", price:0, dupe:"Most Wanted + Born in Roma Uomo"},
+    {brand:"LATTAFA", name:"Asad Elixir 60ml", price:0, dupe:"Bottled Absolu - Hugo Boss"},
+    {brand:"BHARARA", name:"Bharara King 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/bharara-king1.webp", price:0, dupe:"Erba Pura - Xerjoff"},
+    {brand:"ARMAF", name:"Club de Nuit 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/club-de-nuit1.jpg", price:0, dupe:"Creed - Aventus"},
+    {brand:"ARMAF", name:"Mandarin Sky 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/mandarin-sky1.webp", price:0, dupe:"Scandal - JPG"},
+    // ── ARABES UNISEX 60ml ───────────────────────────────────────────────
+    {brand:"XERJOFF", name:"Accento Overdose 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/accento-overdose1.jpg", price:0, dupe:""},
+    {brand:"XERJOFF", name:"Amber Gold 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/amber-gold1.jpeg", price:0, dupe:""},
+    {brand:"AL HARAMAIN", name:"Amber Oud Gold 60ml", price:0, dupe:"Erba Pura - Xerjoff"},
+    {brand:"LATTAFA", name:"Amethyst 60ml", price:0, dupe:"Atomic Rose - Initio"},
+    {brand:"MONTALE", name:"Arabians Tonka 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/arabians-tonka1.webp", price:0, dupe:""},
+    {brand:"XERJOFF", name:"Erba Pura 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/erba-pura1.webp", price:0, dupe:"Kirkè - Tiziana Terenzi"},
+    {brand:"LATTAFA", name:"Honor & Glory 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/honor-and-glory1.webp", price:0, dupe:"Bond No.9 - Tribeca NYC"},
+    {brand:"LATTAFA", name:"Khamrah 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/khamrah1.webp", price:0, dupe:"Angel's Share - Kilian"},
+    {brand:"LATTAFA", name:"Khamrah Qahwa 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/khamrah-qahwa1.webp", price:0, dupe:"Stronger with YOU Intensely - Armani"},
+    {brand:"LATTAFA", name:"Nebras 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/nebras1.jpg", price:0, dupe:"Eilish - Billie Eilish"},
+    {brand:"LATTAFA", name:"Oud for Glory 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/oud-for-glory1.webp", price:0, dupe:"Oud for Greatness - Initio"},
+    {brand:"LATTAFA", name:"Oud Mood 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/oud-mood1.jpg", price:0, dupe:""},
+    {brand:"LATTAFA", name:"Sublime 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/sublime1.webp", price:0, dupe:"Eden Juicy - Kayali"},
+    {brand:"LATTAFA", name:"Teriaq 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/teriaq1.jpg", price:0, dupe:"La Belle - JPG"},
+    {brand:"KAYALI", name:"Yum Pistachio 60ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/yum-pistachio1.webp", price:0, dupe:""},
+  ],
+
+  uni: [
+    {brand:"AFNAN", name:"9am Dive 100ml", price:70000, dupe:"Y - Yves Saint Laurent"},
+    {brand:"AFNAN", name:"9pm Elixir 100ml", price:140000, dupe:"Le Male Elixir Absolu - Jean Paul Gaultier"},
+    {brand:"AFNAN", name:"9pm Night Out 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/9pm-night-out.jpg", price:50000, dupe:"Forever Wanted Elixir - Azzaro"},
+    {brand:"AFNAN", name:"Turathi Electric 100ml", price:60000, dupe:"Blue Talisman - Ex Nihilo"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Carbon Edition 100ml", price:85000, dupe:"Green Irish Tweed - Creed"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Extreme 100ml", price:85000, dupe:"Xerjoff - Erba Pura"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Gold 999.9 Dubai Edition 100ml", price:90000, dupe:"Xerjoff - Erba Pura"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Private Edition 120ml", price:85000, dupe:"Club de Nuit Oud - Armaf"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Rouge 120ml", price:105000, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"AL HARAMAIN", name:"Amber Oud Ruby Edition 120ml", price:95000, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"AL HARAMAIN", name:"Amber Oud White Edition 100ml", price:80000, dupe:"Coco Mademoiselle EDT - Chanel"},
+    {brand:"ARMAF", name:"Club de Nuit Bling 75ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/club-de-nuit-bling1.webp", price:95000, dupe:"Eau Mo Pour Gay - Perfumes Hedoné"},
+    {brand:"ARMAF", name:"Club de Nuit Milestone 105ml", price:60000, dupe:"Millésime Impérial - Creed"},
+    {brand:"ARMAF", name:"Club de Nuit Oud 105ml", price:80000, dupe:"Erba Pura - Xerjoff"},
+    {brand:"ARMAF", name:"Club de Nuit Precioux 55ml", price:80000, dupe:"Absolu Aventus - Creed"},
+    {brand:"ARMAF", name:"Club de Nuit Sillage 105ml", price:55000, dupe:"Silver Mountain Water - Creed"},
+    {brand:"ARMAF", name:"Club de Nuit Untold 105ml", price:65000, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"ARMAF", name:"Odyssey BA HA MAS 100ml", price:65000, dupe:"Le Sel d'Issey - Issey Miyake"},
+    {brand:"ARMAF", name:"Odyssey Go Mango 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/go-mango1.webp", price:65000, dupe:"God of Fire - Stéphane Humbert Lucas 777"},
+    {brand:"ARMAF", name:"Odyssey Limoni 100ml", price:45000, dupe:"Jean Lowe Azure - Maison Alhambra"},
+    {brand:"ARMAF", name:"Odyssey Mandarin Sky Elixir 100ml", price:75000, dupe:"Scandal Pour Homme Le Parfum - JPG"},
+    {brand:"ARMAF", name:"Odyssey Spectra 100ml", price:45000, dupe:"Jean Paul Gaultier - Ultra Male"},
+    {brand:"ARMAF", name:"Club de Nuit Untold", price:60000, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"ARMAF", name:"Limoni", price:45000, dupe:"Afternoon Swim - Louis Vuitton"},
+    {brand:"ARMAF", name:"Spectra", price:65000, dupe:"Ultra Male - Jean Paul Gaultier"},
+    {brand:"ASDAAF", name:"Asdaaf Al Aráb Imperium 100ml", price:35000, dupe:"Y - Yves Saint Laurent"},
+    {brand:"DUBAI SPECIAL", name:"Pistachio Kunafa (Dubai Chocolate) 80ml", price:55000, dupe:"Fragancia gourmand especial Dubai"},
+    {brand:"LATTAFA", name:"Afeed 100ml", price:110000, dupe:"Delina Exclusif - Parfums de Marly"},
+    {brand:"LATTAFA", name:"Ameer Al Oudh 100ml", price:35000, dupe:"Stercus - Orto Parisi"},
+    {brand:"LATTAFA", name:"Ana Abiyedh 60ml", price:35000, dupe:"Erba Pura - Xerjoff"},
+    {brand:"LATTAFA", name:"Ana Abiyedh Coral 60ml", price:35000, dupe:"Wavechild - Room 1015"},
+    {brand:"LATTAFA", name:"Ana Abiyedh Rouge 60ml", price:35000, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"LATTAFA", name:"Angham 100ml", price:45000, dupe:"Goddess - Burberry"},
+    {brand:"LATTAFA", name:"Art of Universe 100ml", price:60000, dupe:"Blue Talisman - Ex Nihilo"},
+    {brand:"LATTAFA", name:"Atlas 55ml", price:55000, dupe:"Megamare - Orto Parisi"},
+    {brand:"LATTAFA", name:"Bade Al Oud Amethyst 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/amethyst1.webp", price:45000, dupe:"Atomic Rose - Initio"},
+    {brand:"LATTAFA", name:"Bade Al Oud Honor & Glory 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/honor-and-glory1.webp", price:45000, dupe:"Bond No.9 - Tribeca NYC"},
+    {brand:"LATTAFA", name:"Bade Al Oud Sublime 100ml", price:45000, dupe:"Eden Juicy - Kayali"},
+    {brand:"LATTAFA", name:"Confidential Private Gold 100ml", price:35000, dupe:"Kirke - Tiziana Terenzi"},
+    {brand:"LATTAFA", name:"DREAM OF HAZE 100ml", price:80000, dupe:"Side Effect Ex Nihilo + Herod Parfums de Marly + Naxos Perris Monte Carlo + ADN The Most Wanted"},
+    {brand:"LATTAFA", name:"Emmer 100ml", price:60000, dupe:"Town & Country - Clive Christian"},
+    {brand:"LATTAFA", name:"Fakhar Platin 100ml", price:40000, dupe:"Y Elixir - Yves Saint Laurent"},
+    {brand:"LATTAFA", name:"Hayaati Al Maleky 100ml", price:35000, dupe:"Phantom - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Hayaati Gold Elixir 100ml", price:35000, dupe:"Armani Code - Giorgio Armani"},
+    {brand:"LATTAFA", name:"Hayaatim 100ml", price:35000, dupe:"Flora Gorgeous Gardenia - Gucci"},
+    {brand:"LATTAFA", name:"Ishq Al Shuyukh Gold 100ml", price:45000, dupe:"Rosendo Mateu Nº5 Olfactive Expressions"},
+    {brand:"LATTAFA", name:"Ishq Al Shuyukh Silver 100ml", price:45000, dupe:"One Million Lucky - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Jasoor 100ml", price:55000, dupe:"Valentino Uomo Born In Roma Coral Fantasy"},
+    {brand:"LATTAFA", name:"Khamrah 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/khamrah1.webp", price:45000, dupe:"Angel's Share - Kilian"},
+    {brand:"LATTAFA", name:"Khamrah Dukhan 100ml", price:45000, dupe:"Angel's Share - Kilian"},
+    {brand:"LATTAFA", name:"Khamrah Qahwa 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/khamrah-qahwa1.webp", price:45000, dupe:"Stronger with YOU Intensely - Emporio Armani"},
+    {brand:"LATTAFA", name:"Kit Art Of Universe", price:80000, dupe:"Blue Talisman - Ex Nihilo"},
+    {brand:"LATTAFA", name:"Kit Ishq Al Shuyukh Silver", price:60000, dupe:"One Million Lucky - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Kit Nebras", price:60000, dupe:"Eilish - Billie Eilish"},
+    {brand:"LATTAFA", name:"Musaman White Intense 100ml", price:70000, dupe:"Stellar Times - Louis Vuitton"},
+    {brand:"LATTAFA", name:"Nebras 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/nebras1.jpg", price:45000, dupe:"Eilish - Billie Eilish"},
+    {brand:"LATTAFA", name:"Nebras Elixir 100ml", price:70000, dupe:"Vanilla Swirl - Victoria's Secret"},
+    {brand:"LATTAFA", name:"Petra 100ml", price:40000, dupe:"Quattro Pizzi - Xerjoff"},
+    {brand:"LATTAFA", name:"Sheikh Shuyukh 100ml", price:35000, dupe:"Scandal - Jean Paul Gaultier"},
+    {brand:"LATTAFA", name:"Teriaq 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/teriaq1.jpg", price:50000, dupe:"La Belle - Jean Paul Gaultier"},
+    {brand:"LATTAFA", name:"Teriaq Intense 100ml", price:50000, dupe:"Drunk Saffron - BORNTOSTANDOUT"},
+    {brand:"LATTAFA", name:"Victoria 100ml", price:50000, dupe:"Devotion - Dolce & Gabbana"},
+    {brand:"LATTAFA", name:"Vintage Radio 100ml", price:50000, dupe:"Paragon - Initio"},
+    {brand:"LATTAFA", name:"Amethyst", price:20000, dupe:"Atomic Rose - Initio"},
+    {brand:"LATTAFA", name:"Ana Abiyedh", price:20000, dupe:"Erba Pura - Xerjoff"},
+    {brand:"LATTAFA", name:"Bade Al Oud Honor & Glory", price:20000, dupe:"Bond No.9 - Tribeca NYC"},
+    {brand:"LATTAFA", name:"Confidential Private Gold", price:20000, dupe:"Kirke - Tiziana Terenzi"},
+    {brand:"LATTAFA", name:"Fakhar Platin", price:20000, dupe:"Y Elixir - YSL"},
+    {brand:"LATTAFA", name:"Hayaati Al Maleky", price:20000, dupe:"Phantom - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Honor & Glory", price:20000, dupe:"Bond No.9 - Tribeca NYC"},
+    {brand:"LATTAFA", name:"Khamrah", price:20000, dupe:"Angel's Share - Kilian"},
+    {brand:"LATTAFA", name:"Khamrah Qahwa", price:20000, dupe:"Stronger with YOU - Emporio Armani"},
+    {brand:"LATTAFA", name:"Musaman White Intense", price:20000, dupe:"Stellar Times - Louis Vuitton"},
+    {brand:"LATTAFA", name:"Qaed al Fursan", price:20000, dupe:"Black XS - Paco Rabanne"},
+    {brand:"LATTAFA", name:"Sublime", price:20000, dupe:"Eden Juicy - Kayali"},
+    {brand:"LATTAFA", name:"Victoria", price:20000, dupe:"Devotion - Dolce & Gabbana"},
+    {brand:"MAISON ALHAMBRA", name:"Eternal Touch 80ml", price:50000, dupe:"Tobacco Vanille - Tom Ford"},
+    {brand:"MAISON ALHAMBRA", name:"Extravagant Lover 100ml", price:55000, dupe:"Valentino Uomo Born in Roma Green Stravaganza"},
+    {brand:"MAISON ALHAMBRA", name:"Glacier Pour Homme 100ml", price:55000, dupe:"Le Male - Jean Paul Gaultier"},
+    {brand:"MAISON ALHAMBRA", name:"Glacier Ultra 100ml", price:55000, dupe:"Ultra Male - Jean Paul Gaultier"},
+    {brand:"MAISON ALHAMBRA", name:"Jean Lowe Noir 100ml", price:65000, dupe:"Ombre Nomade - Louis Vuitton"},
+    {brand:"MAISON ALHAMBRA", name:"Opera Rouge 100ml", price:50000, dupe:"Black Opium Over Red - YSL"},
+    {brand:"MAISON ALHAMBRA", name:"Philos Pura 100ml", price:65000, dupe:"Erba Pura - Xerjoff"},
+    {brand:"MAISON ALHAMBRA", name:"Philos Rosso 100ml", price:55000, dupe:"Baccarat Rouge 540 - MFK"},
+    {brand:"MAISON ALHAMBRA", name:"Sceptre Malachite 100ml", price:80000, dupe:"God of Fire - Stéphane Humbert Lucas 777"},
+    {brand:"MAISON ALHAMBRA", name:"Eternal Touch 30ml", price:25000, dupe:"Tobacco Vanille - Tom Ford"},
+    {brand:"MAISON ALHAMBRA", name:"Glacier Le Noir 30ml", price:25000, dupe:"Le Male Le Parfum - JPG"},
+    {brand:"PARIS CORNER", name:"Beach Party 100ml", price:80000, dupe:"Summer Hammer - Lorenzo Pazzaglia"},
+    {brand:"PARIS CORNER", name:"Dunescape 100ml", price:90000, dupe:"Y EDP - Yves Saint Laurent"},
+    {brand:"PARIS CORNER", name:"Island Breeze 100ml", price:75000, dupe:"Vanilla Ice Cream - Demeter Fragrance"},
+    {brand:"PARIS CORNER", name:"Veneno 100ml", price:75000, dupe:"Smoking Hot - By Kilian"},
+    {brand:"PARIS CORNER", name:"Veneno Bianco 100ml", price:75000, dupe:"Sunkissed Goddess - By Kilian"},
+    {brand:"PARIS CORNER", name:"Veneno Scarlet 100ml", price:75000, dupe:"Venom Incarnat - Stéphane Humbert Lucas 777"},
+    {brand:"PARIS CORNER", name:"Vulcan Baie 100ml", price:65000, dupe:"Pink Boa - Stéphane Humbert Lucas 777"},
+    {brand:"PARIS CORNER", name:"Vulcan Feu 100ml", price:75000, dupe:"God of Fire - Stéphane Humbert Lucas 777"},
+    {brand:"PARIS CORNER", name:"Vulcan Sable 100ml", price:60000, dupe:"Sand Dance - Stéphane Humbert Lucas 777"},
+    {brand:"RASASI", name:"Hawas Elixir 100ml", price:60000, dupe:"Le Male Elixir - Jean Paul Gaultier"},
+    {brand:"RASASI", name:"Hawas Fire 100ml", price:65000, dupe:"Imperial Valley - Gissah"},
+    {brand:"RASASI", name:"Hawas Malibu 100ml", price:85000, dupe:"Le Beau Le Parfum - Jean Paul Gaultier"},
+    {brand:"RAYHAAN", name:"Rayhaan Elixir 100ml", price:55000, dupe:"Le Male Elixir - Jean Paul Gaultier"},
+    {brand:"RAYHAAN", name:"Rayhaan Jungle Vibe 100ml", price:55000, dupe:"Santal Greenery - Dries Van Noten"},
+    {brand:"RAYHAAN", name:"Tropical VIBE 100ml", price:55000, dupe:"Summer Hummer - Lorenzo Pazzaglia"},
+    {brand:"XERJOFF", name:"Erba Pura 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/erba-pura1.webp", price:480000, dupe:"Kirkè - Tiziana Terenzi"},
+    {brand:"XERJOFF", name:"XJ 1861 Naxos 100ml", img:"https://cdn.jsdelivr.net/gh/Razzner04/NIvek@main/Fotos-de-perfumes_extractos/naxos1.jpg", price:520000, dupe:"A*Men Pure Havane - Mugler"},
+    {brand:"ZAKAT", name:"World Cup Vip 80ml", price:250000, dupe:"Imagination - Louis Vuitton"},
+    {brand:"ZAKAT", name:"ZAKAT World Cup 80ml", price:280000, dupe:"God of Fire - Stephan Humbert Lucas"},
+  ]
+};
+
+let allProducts = [];
+['fem','masc','uni','ext'].forEach(cat => data[cat].forEach(p => allProducts.push({...p, cat})));
+
+let activeFilter='all', activeSort='default', searchTerm='', maxPrice=520000;
+const catLabels = {fem:'Femenino', masc:'Masculino', uni:'Unisex', ext:'Extractos'};
+const detailCache = {};
+
+function fmtPrice(p){ return p===0 ? 'Consultar precio' : '$' + p.toLocaleString('es-AR'); }
+function getPriceTier(p,cat){ 
+  if(cat==='ext'||p===0) return '#00bcd4';
+  if(p<50000) return '#7ab58a'; if(p<80000) return '#00bcd4'; if(p<150000) return '#e8804a'; return '#c96b8a'; 
+}
+
+function setFilter(f){
+  activeFilter=f;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.cat-btn')[['all','fem','masc','uni','ext'].indexOf(f)].classList.add('active');
+  render();
+}
+function setSort(v){ activeSort=v; render(); }
+function setSearch(v){ searchTerm=v.toLowerCase(); render(); }
+function setPriceFilter(v){
+  maxPrice=parseInt(v);
+  const pct=(v/520000*100).toFixed(1);
+  document.getElementById('price-range').style.setProperty('--pct',pct+'%');
+  document.getElementById('price-range-val').textContent=v>=520000?'Sin límite':fmtPrice(parseInt(v));
+  render();
+}
+
+function render(){
+  let products=allProducts.filter(p=>{
+    if(activeFilter!=='all'&&p.cat!==activeFilter) return false;
+    if(p.price>maxPrice) return false;
+    if(searchTerm&&!p.name.toLowerCase().includes(searchTerm)&&!p.brand.toLowerCase().includes(searchTerm)) return false;
+    return true;
+  });
+  document.getElementById('shown-count').textContent=products.length;
+  if(!products.length){ document.getElementById('catalog').innerHTML=''; document.getElementById('no-results').style.display='block'; return; }
+  document.getElementById('no-results').style.display='none';
+  let sorted=[...products];
+  if(activeSort==='price-asc') sorted.sort((a,b)=>a.price-b.price);
+  else if(activeSort==='price-desc') sorted.sort((a,b)=>b.price-a.price);
+  else if(activeSort==='name') sorted.sort((a,b)=>a.name.localeCompare(b.name));
+  let html='';
+  if(activeSort==='default'){
+    const catOrder=activeFilter==='all'?['fem','masc','uni','ext']:[activeFilter];
+    catOrder.forEach(cat=>{
+      const cp=sorted.filter(p=>p.cat===cat);
+      if(!cp.length) return;
+      html+=`<div class="cat-divider"><span class="cat-divider-label">${catLabels[cat]}</span><div class="cat-divider-line"></div><span class="cat-divider-badge ${cat}-badge">${cp.length} fragancias</span></div>`;
+      const brands=[...new Set(cp.map(p=>p.brand))];
+      brands.forEach(brand=>{
+        const bp=cp.filter(p=>p.brand===brand);
+        html+=`<div class="brand-section"><div class="brand-header"><span class="brand-name">${brand}</span><span class="brand-count">${bp.length} producto${bp.length>1?'s':''}</span></div><div class="products-grid">`;
+        bp.forEach((p,i)=>html+=cardHTML(p,i));
+        html+=`</div></div>`;
+      });
+    });
+  } else {
+    html+=`<div class="products-grid" style="margin-top:8px">`;
+    sorted.forEach((p,i)=>html+=cardHTML(p,i));
+    html+=`</div>`;
+  }
+  document.getElementById('catalog').innerHTML=html;
+  // Lazy-load images for all cards that don't have images yet
+  // images handled locally
+}
+
+function cardHTML(p,i){
+  // extracto badge
+  const isExt = p.cat==='ext';
+  const vol=p.name.match(/(\d+ml)/i)?.[1]||'';
+  const nameClean=p.name.replace(/\s*\d+ml\s*/i,'').trim();
+  const id=btoa(encodeURIComponent(p.brand+'||'+p.name)).replace(/[^a-zA-Z0-9]/g,'');
+  const emoji = p.cat==='fem'?'🌸':p.cat==='masc'?'🌊':'✨';
+  const imgSection = p.img
+    ? `<div class="card-img-wrap"><img src="${p.img}" alt="${nameClean}" loading="lazy" style="max-height:155px;max-width:90%;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5))" onerror="this.parentElement.innerHTML='<div class=card-img-placeholder><span class=ph-emoji>${emoji}</span><span class=ph-name>${nameClean}</span></div>'"></div>`
+    : `<div class="card-img-wrap"><div class="card-img-placeholder"><span class="ph-emoji">${emoji}</span><span class="ph-name">${nameClean}</span></div></div>`;
+  return `<div class="product-card ${p.cat}" style="animation-delay:${Math.min(i*0.03,0.5)}s" onclick="openModal('${id}')">
+    ${imgSection}
+    <div class="card-body">
+      <span class="product-cat-tag">${catLabels[p.cat]}</span>
+      <div class="product-name">${nameClean}${vol?` <span style="font-size:.75em;opacity:.5">${vol}</span>`:''}</div>
+      ${isExt?`<div style="font-size:.55rem;letter-spacing:.15em;color:#00bcd4;text-transform:uppercase;margin:-4px 0 6px;font-weight:600">✦ Extrait de Parfum 60ml</div>`:''}
+      ${p.dupe?`<div class="product-dupe">✦ ${p.dupe}</div>`:''}
+      <div class="product-footer" style="margin-top:auto;padding-top:10px">
+        <span class="product-price" style="color:${getPriceTier(p.price,p.cat)}">${p.price===0?'Consultar':fmtPrice(p.price)}</span>
+        ${vol?`<span class="product-vol">${vol}</span>`:''}
+      </div>
+      <div class="detail-hint">VER DETALLE →</div>
+    </div>
+  </div>`;
+}
+
+// Store card id -> product mapping
+const productMap = {};
+allProducts.forEach(p=>{
+  const id=btoa(encodeURIComponent(p.brand+'||'+p.name)).replace(/[^a-zA-Z0-9]/g,'');
+  productMap[id]=p;
+});
+
+// ── LOCAL DETAIL LOOKUP (no API needed) ─────────────────────────────────────
+const notesDB = {
+  "aqua vitae forte":{"familia":"Cítrica Amaderada","sal":["Limón","Bergamota","Pomelo"],"cor":["Incienso","Ámbar","Pimienta"],"bas":["Madera de Cachemira","Almizcle","Cedro"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia cítrica y amaderada que combina la frescura de los cítricos con la calidez de la madera. Ideal para el uso cotidiano, proyecta elegancia sin esfuerzo."},
+  "my way":{"familia":"Floral Amaderada","sal":["Bergamota","Naranja","Neroli"],"cor":["Jazmín","Flor de Naranjo","Tuberosa"],"bas":["Madera de Cachemira","Vainilla","Almizcle Blanco"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia floral cálida y envolvente con notas de jazmín y madera de cachemira. Perfecta para la mujer moderna que busca dejar una huella memorable."},
+  "flamenco":{"familia":"Floral Oriental","sal":["Bergamota","Limón"],"cor":["Rosa","Geranio","Ylang-Ylang"],"bas":["Sándalo","Almizcle","Vainilla"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia ardiente y sensual inspirada en la pasión del flamenco. Combina flores exóticas con bases cálidas para una experiencia apasionada."},
+  "l'interdit rouge":{"familia":"Floral Especiada","sal":["Pera","Bergamota"],"cor":["Jazmín","Rosa","Fresia"],"bas":["Vetiver","Pachulí","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Versión oscura e intensa del clásico L'Interdit con toques especiados y florales. Evoca el lado prohibido y seductor de la feminidad."},
+  "l interdit rouge":{"familia":"Floral Especiada","sal":["Pera","Bergamota"],"cor":["Jazmín","Rosa","Fresia"],"bas":["Vetiver","Pachulí","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Versión oscura e intensa del clásico L'Interdit con toques especiados y florales. Evoca el lado prohibido y seductor de la feminidad."},
+  "ralph lauren woman":{"familia":"Floral Frutal","sal":["Bergamota","Limón","Pera"],"cor":["Iris","Magnolia","Rosa"],"bas":["Almizcle","Madera","Vetiver"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia femenina fresca y elegante con notas florales y frutos delicados. Perfecta para la mujer activa y cosmopolita."},
+  "erba pura":{"familia":"Floral Frutal Amaderada","sal":["Bergamota","Mandarina","Pomelo"],"cor":["Flor de Naranjo","Jazmín","Heliotropo"],"bas":["Almizcle Blanco","Sándalo","Cedro"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Fragancia fresca y vibrante que combina cítricos mediterráneos con flores blancas y maderas suaves. Uno de los más populares del mercado árabe."},
+  "l'interdit":{"familia":"Floral Amaderada","sal":["Bergamota","Pera","Neroli"],"cor":["Jazmín","Fresia","Ylang-Ylang"],"bas":["Vetiver","Pachulí","Almizcle"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia sofisticada y misteriosa con corazón floral y base amaderada. Encarna la elegancia femenina con un toque de misterio."},
+  "l interdit":{"familia":"Floral Amaderada","sal":["Bergamota","Pera","Neroli"],"cor":["Jazmín","Fresia","Ylang-Ylang"],"bas":["Vetiver","Pachulí","Almizcle"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia sofisticada y misteriosa con corazón floral y base amaderada. Encarna la elegancia femenina con un toque de misterio."},
+  "burberry her":{"familia":"Frutal Floral","sal":["Moras","Fresa","Grosella Roja"],"cor":["Violeta","Jazmín"],"bas":["Almizcle","Ámbar"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia fresca y afrutada que captura la energía vibrante de la ciudad. Sus notas de frutos rojos se mezclan con florales suaves en una base almizcleña."},
+  "goddess":{"familia":"Frutal Floral Gourmand","sal":["Mora","Bergamota"],"cor":["Jazmín","Violeta"],"bas":["Vainilla","Madera","Almizcle"],"int":"Intensa","oc":"Noche","est":"Todo el año","desc":"Fragancia audaz y femenina que combina frutos del bosque con florales sensuales. Exuda confianza y poder femenino."},
+  "delina exclusif":{"familia":"Floral Especiada","sal":["Bergamota","Lichi"],"cor":["Rosa","Peonía","Nuez Moscada"],"bas":["Madera de Cachemira","Almizcle","Vainilla"],"int":"Intensa","oc":"Noche","est":"Todo el año","desc":"Versión más intensa y especiada de Delina, con una rosa magnífica en el corazón. Para la mujer que quiere ser recordada por su fragancia."},
+  "noir de noir":{"familia":"Floral Oriental Oscura","sal":["Rosa","Trufa"],"cor":["Rosa Negra","Oud","Pachulí"],"bas":["Sándalo","Vainilla","Almizcle"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia oscura y misteriosa que combina la rosa negra con notas de oud y trufa. Sensual y sofisticada, perfecta para noches especiales."},
+  "very good girl":{"familia":"Floral Frutal","sal":["Lichi","Frambuesa"],"cor":["Rosa","Fresia"],"bas":["Madera","Vainilla","Almizcle"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia joven y vibrante que mezcla frutas jugosas con un corazón floral suave. Fresca, femenina y adictiva."},
+  "coco mademoiselle":{"familia":"Floral Frutal Oriental","sal":["Bergamota","Naranja","Mandarina"],"cor":["Rosa","Jazmín","Mimosa"],"bas":["Vetiver","Pachulí","Vainilla"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Clásico moderno de Chanel que combina la frescura cítrica con un corazón floral elegante y una base oriental cálida. Sofisticado e irresistible."},
+  "poison girl":{"familia":"Floral Gourmand","sal":["Mandarina","Bergamota"],"cor":["Rosa","Neroli","Ambrette"],"bas":["Vainilla","Almendra","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia dulce y seductora que combina rosa fresca con una base gourmand de vainilla y almendra. Adictiva y femenina."},
+  "good girl":{"familia":"Floral Gourmand","sal":["Almendra","Café"],"cor":["Jazmín","Rosa","Tuberosa"],"bas":["Cacao","Tonka","Vainilla"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia dual que combina la inocencia floral con el lado oscuro del café y el cacao. Seductora y memorable, perfecta para la noche."},
+  "good girl blush":{"familia":"Floral Frutal","sal":["Pera","Bergamota"],"cor":["Rosa","Peonía","Magnolia"],"bas":["Madera de Cachemira","Almizcle","Sándalo"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Versión suave y romántica de Good Girl con flores rosadas y frutas delicadas. Fresca y elegante para el día."},
+  "bianco latte":{"familia":"Gourmand Cremosa","sal":["Coco","Vainilla"],"cor":["Leche","Heliotropo","Almendra"],"bas":["Almizcle Blanco","Sándalo","Benjuí"],"int":"Suave","oc":"Todo día","est":"Todo el año","desc":"Fragancia cremosa y reconfortante que evoca la calidez de la leche tibia. Dulce y envolvente, ideal para quienes buscan un aura de suavidad."},
+  "sweet like candy":{"familia":"Gourmand Floral","sal":["Pera","Frambuesa","Manzana"],"cor":["Algodón de Azúcar","Jazmín","Fresia"],"bas":["Almizcle Blanco","Vainilla","Madera"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia dulce y juguetona inspirada en el algodón de azúcar. Fresca y femenina, perfecta para el día a día."},
+  "la vie est belle":{"familia":"Floral Gourmand","sal":["Grosella"],"cor":["Iris","Jazmín","Pralina"],"bas":["Patchouli","Vainilla","Tonka"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Fragancia optimista que celebra la alegría de vivir. La combinación de iris, jazmín y vainilla la convierte en un clásico moderno e irresistible."},
+  "black opium":{"familia":"Floral Amaderada","sal":["Pera","Grosella Negra","Mandarina"],"cor":["Jazmín","Café","Flor de Naranjo"],"bas":["Vainilla","Pachulí","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia adictiva y seductora con notas de café y jazmín sobre una base de vainilla. Perfecta para noches de fiesta."},
+  "libre":{"familia":"Floral Amaderada","sal":["Mandarina","Petitgrain","Lavanda"],"cor":["Flor de Naranjo Marroquí","Jazmín"],"bas":["Vainilla","Ámbar","Almizcle"],"int":"Intensa","oc":"Noche","est":"Todo el año","desc":"Fragancia libre y poderosa que combina la lavanda masculina con la flor de naranjo femenina. Andrógina, moderna y llena de carácter."},
+  "j'adore":{"familia":"Floral","sal":["Bergamota","Melocotón"],"cor":["Ylang-Ylang","Rosa Damascena","Orquídea"],"bas":["Vainilla","Civet","Ámbar"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Icono de la perfumería femenina, J'adore es una sinfonía floral con notas de rosa damascena y ylang-ylang. Elegancia atemporal."},
+  "jadore":{"familia":"Floral","sal":["Bergamota","Melocotón"],"cor":["Ylang-Ylang","Rosa Damascena","Orquídea"],"bas":["Vainilla","Civet","Ámbar"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Icono de la perfumería femenina, J'adore es una sinfonía floral con notas de rosa damascena y ylang-ylang. Elegancia atemporal."},
+  "fame":{"familia":"Floral Frutal","sal":["Mango","Mandarina","Bergamota"],"cor":["Jazmín","Ylang-Ylang","Rosa"],"bas":["Almizcle","Vetiver","Patchouli"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Fragancia vibrante que refleja la energía de las estrellas. Sus notas frutales y florales en una expresión moderna de feminidad."},
+  "idole":{"familia":"Floral Fresca","sal":["Bergamota","Neroli"],"cor":["Rosa","Jazmín","Iris"],"bas":["Almizcle","Madera","Vetiver"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia fresca y moderna que celebra a la mujer de hoy. Su corazón de rosa y jazmín es luminoso y optimista."},
+  "flowerbomb ruby orchid":{"familia":"Floral Oriental","sal":["Bergamota","Limón"],"cor":["Orquídea","Rosa","Jazmín"],"bas":["Patchouli","Ámbar","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragmentos explosivamente florales y orientales. La orquídea roja se combina con rosas y jazmín sobre una base cálida y sensual."},
+  "delina":{"familia":"Floral Frutal","sal":["Lichi","Pera","Pomelo"],"cor":["Rosa","Peonía","Magnolia"],"bas":["Madera de Cachemira","Almizcle","Vainilla"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia femenina y romántica con un corazón de rosa perfecto. Sus notas frutales y florales crean una composición irresistiblemente femenina."},
+  "creed aventus":{"familia":"Frutal Chypre Amaderada","sal":["Piña","Bergamota","Manzana Negra","Grosella"],"cor":["Abedul","Patchouli","Rosa","Jazmín"],"bas":["Almizcle","Ámbar","Algas Marinas"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"El rey de los perfumes masculinos modernos. Piña fresca con ahumado de abedul y base musguosa. Poder y carisma en cada spray."},
+  "sauvage":{"familia":"Aromática Amaderada","sal":["Bergamota","Pimienta"],"cor":["Geranio","Lavanda","Pimienta Sichuan"],"bas":["Ámbar Gris","Cedro","Vetiver"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Uno de los perfumes masculinos más vendidos del mundo. Bergamota y pimienta evolucionan hacia un corazón aromático y una base mineral profunda."},
+  "bleu de chanel":{"familia":"Aromática Amaderada","sal":["Limón","Menta","Pimienta Rosa"],"cor":["Incienso","Nuez Moscada","Jengibre"],"bas":["Cedro","Sándalo","Vetiver"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Fragancia masculina icónica que evoluciona de lo fresco a lo amaderado. Elegante, moderno y versátil para cualquier ocasión."},
+  "invictus":{"familia":"Acuática Amaderada","sal":["Pomelo","Laurel Marino"],"cor":["Hedione","Jazmín"],"bas":["Madera de Guayaco","Amberwood","Almizcle"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia fresca y deportiva que irradia energía y dinamismo. Sus notas acuáticas y amaderadas crean una estela limpia y atlética."},
+  "le male":{"familia":"Aromática Oriental","sal":["Lavanda","Menta","Cardamomo"],"cor":["Ámbar","Canela","Cumin"],"bas":["Vainilla","Sándalo","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Clásico icónico de Jean Paul Gaultier que combina la lavanda y la menta con una base cálida y sensual. Seductor y masculino."},
+  "le male elixir":{"familia":"Oriental Amaderada","sal":["Lavanda","Cardamomo"],"cor":["Flor de Naranjo","Ámbar"],"bas":["Vainilla","Sándalo","Cuero"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"La versión más oscura e intensa de Le Male. Fragancia hipnótica que combina la lavanda con el cuero y la vainilla en una expresión supremamente seductora."},
+  "oud for greatness":{"familia":"Oud Especiada","sal":["Azafrán","Nuez Moscada"],"cor":["Oud","Rosa"],"bas":["Cuero","Patchouli","Almizcle"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia de oud poderosa y majestuosa. La combinación de azafrán, oud y cuero crea una experiencia olfativa noble y atemporal."},
+  "baccarat rouge 540":{"familia":"Floral Ambarada","sal":["Azafrán"],"cor":["Jazmín","Ambroxan"],"bas":["Cedro","Almizcle","Fougère"],"int":"Muy intensa","oc":"Noche","est":"Todo el año","desc":"El perfume más copiado del mundo. Una fragancia mineral y ambarada con azafrán y jazmín que deja una estela magnética e inconfundible."},
+  "angels share":{"familia":"Oriental Gourmand","sal":["Coñac","Canela","Cardamomo"],"cor":["Orquídea","Roble"],"bas":["Vainilla","Palo Santo","Caramelo"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Inspirada en el proceso de envejecimiento del whisky, combina coñac y canela con vainilla y caramelo. Cálida, sensual y adictiva."},
+  "tobacco vanille":{"familia":"Oriental Especiada","sal":["Tabaco"],"cor":["Vainilla","Cacao","Tonka"],"bas":["Madera Seca","Frutas Secas","Bálsamo"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Una de las fragancias más amadas de Tom Ford. Tabaco dulce y vainilla crean una experiencia sensual, cálida y adictiva."},
+  "noir extreme":{"familia":"Oriental Especiada","sal":["Cardamomo","Bergamota"],"cor":["Nuez Moscada","Mandarina","Rosa"],"bas":["Sándalo","Oud","Vainilla"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia masculina oscura y especiada con oud y sándalo. Sofisticada y misteriosa, perfecta para ocasiones especiales nocturnas."},
+  "ombre leather":{"familia":"Cuero Amaderada","sal":["Cardamomo","Pimienta"],"cor":["Cuero","Jazmín"],"bas":["Patchouli","Musgo de Roble","Vetiver"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Homenaje al cuero occidental, crudo y elegante. Cuero y especias sobre una base amaderada crean una fragancia de carácter único."},
+  "imagination":{"familia":"Acuática Amaderada","sal":["Limón","Bergamota","Menta"],"cor":["Agua","Ciprés","Lavanda"],"bas":["Ámbar Gris","Vetiver","Madera"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia acuática y sofisticada de Louis Vuitton. Fresca y libre, evoca la sensación de brisa marina con elegantes notas amaderadas."},
+  "stronger with you":{"familia":"Oriental Especiada","sal":["Salvia","Cardamomo"],"cor":["Violeta","Castaña","Lavanda"],"bas":["Vainilla","Madera","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia especiada y cálida que combina la dulzura de la castaña con especias orientales. Romántica y seductora."},
+  "one million":{"familia":"Aromática Oriental","sal":["Pomelo","Menta","Mandarina"],"cor":["Rosa","Canela","Azafrán"],"bas":["Cuero","Pachulí","Amberwood"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Una de las fragancias masculinas más vendidas del mundo. Notas frescas y especiadas con cuero y pachulí para un efecto irresistible."},
+  "eros":{"familia":"Oriental Fresca","sal":["Menta","Manzana Verde","Limón"],"cor":["Raíz de Iris","Ambroxan","Geranio"],"bas":["Vainilla","Vetiver","Cedro"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Fragancia viril y seductora inspirada en el dios griego del amor. La menta fresca contrasta con la calidez de la vainilla en una combinación adictiva."},
+  "acqua di gio profumo":{"familia":"Acuática Especiada","sal":["Bergamota","Agua Marina"],"cor":["Geranio","Salvia","Incienso"],"bas":["Patchouli","Incienso","Almizcle"],"int":"Intensa","oc":"Todo día","est":"Primavera-Verano","desc":"Evolución oscura del clásico Acqua di Gio. El incienso marino le da profundidad meditativa a su frescura acuática característica."},
+  "acqua di gio profondo":{"familia":"Acuática Amaderada","sal":["Bergamota","Agua Marina"],"cor":["Menta Acuática","Algas Marinas"],"bas":["Mineral","Vetiver","Patchouli"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia acuática profunda y misteriosa que evoca las profundidades del océano. Fresca con carácter mineral y amaderado."},
+  "acqua di gioia":{"familia":"Acuática Floral","sal":["Menta","Limón","Jazmín Acuático"],"cor":["Loto","Agua","Rosa"],"bas":["Almizcle","Cedro","Ámbar"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia fresca y marina que evoca la alegría del agua. Sus notas acuáticas y florales crean una experiencia refrescante y femenina."},
+  "bad boy":{"familia":"Aromática Amaderada","sal":["Bergamota","Pimienta"],"cor":["Salvia","Cacao","Regaliz"],"bas":["Ámbar Gris","Cedro","Vetiver"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"La fragancia del rebelde elegante. Combina la frescura bergamotada con el cacao oscuro y la calidez del ámbar para un resultado transgresor y seductor."},
+  "phantom":{"familia":"Floral Amaderada","sal":["Limón","Manzana Verde"],"cor":["Lavanda","Jazmín","Nuez Moscada"],"bas":["Vainilla","Vetiver","Almizcle"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia futurista que combina la lavanda fresca con la calidez de la vainilla. Moderna y versátil para cualquier ocasión."},
+  "sauvage elixir":{"familia":"Aromática Especiada","sal":["Canela","Cardamomo","Cítrico"],"cor":["Nuez Moscada","Patchouli"],"bas":["Ámbar","Cedro","Vetiver"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"La versión más intensa y animal de Sauvage. Canela y cardamomo abren paso a un corazón especiado sobre una base amaderada profunda y embriagadora."},
+  "dylan blue":{"familia":"Acuática Aromática","sal":["Pomelo","Pimienta Negra","Higo"],"cor":["Violeta","Patchouli","Papiro"],"bas":["Ámbar","Almizcle","Incienso"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia acuática e intensa inspirada en los mares italianos. Combina pomelo y higo con un corazón amaderado y ámbar."},
+  "invictus aqua":{"familia":"Acuática Fresca","sal":["Menta","Mandarina","Pimienta Rosa"],"cor":["Hedione","Jazmín","Sal Marina"],"bas":["Amberwood","Almizcle","Madera"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"La versión acuática del Invictus, más fresca y ligera. Perfecta para el verano y el día a día activo."},
+  "armani code":{"familia":"Oriental Amaderada","sal":["Bergamota","Limón"],"cor":["Anís Estrellado","Laurel"],"bas":["Ámbar","Cuero","Tabaco"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia masculina misteriosa y seductora. Su combinación de especias orientales y madera crea un aura de sofisticación irresistible."},
+  "allure homme sport":{"familia":"Cítrica Amaderada","sal":["Mandarina","Limón","Bergamota"],"cor":["Notas Marinas","Cedro"],"bas":["Almizcle","Vainilla","Vetiver"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia deportiva y elegante de Chanel. Sus notas cítricas y marinas evolucionan hacia una base amaderada y masculina."},
+  "silver mountain water":{"familia":"Acuática Aromática","sal":["Bergamota","Grosellas"],"cor":["Té Verde","Neroli"],"bas":["Almizcle","Sándalo","Musgo"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia de inspiración alpina con té verde y grosellas sobre una base amaderada. Fresca, limpia y sofisticada."},
+  "millesime imperial":{"familia":"Acuática Frutal","sal":["Limón","Mandarina"],"cor":["Melón","Algas Marinas"],"bas":["Almizcle","Ámbar Gris","Cedro"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Himno a la elegancia marina. Notas de melón y cítricos sobre un fondo de ámbar gris crean una de las fragancias más icónicas de Creed."},
+  "xj 1861 naxos":{"familia":"Oriental Gourmand","sal":["Bergamota","Lavanda"],"cor":["Miel","Canela","Tabaco"],"bas":["Madera de Cachemira","Vainilla","Almizcle"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Una de las fragancias más lujosas. La miel, el tabaco y la canela crean una composición gourmand de extraordinaria elegancia."},
+  "naxos":{"familia":"Oriental Gourmand","sal":["Bergamota","Lavanda"],"cor":["Miel","Canela","Tabaco"],"bas":["Madera de Cachemira","Vainilla","Almizcle"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Xerjoff Naxos es una obra maestra gourmand. La miel, el tabaco y la canela crean una composición de extraordinaria elegancia y persistencia."},
+  "yum marshmallow":{"familia":"Gourmand Floral","sal":["Frutos Rojos","Bergamota"],"cor":["Marshmallow","Jazmín","Rosa"],"bas":["Vainilla","Almizcle","Sándalo"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia dulce como el algodón de azúcar con un corazón floral delicado. Irresistiblemente femenina y adictiva."},
+  "love dont be shy":{"familia":"Gourmand Floral","sal":["Neroli","Frutas Tropicales"],"cor":["Rosa","Miel"],"bas":["Vainilla","Almizcle","Caramelo"],"int":"Intensa","oc":"Noche","est":"Todo el año","desc":"Fragancia de vainilla rica y sensual con miel y rosa. Dulce, romántica y adictiva, evoca la intimidad y el romance."},
+  "attrape reves":{"familia":"Floral Frutal","sal":["Lichi","Grosellas","Naranja"],"cor":["Peonía","Rosa","Iris"],"bas":["Patchouli","Madera","Vainilla"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Un sueño floral y frutal de Louis Vuitton. Notas de lichi y peonías crean una fragancia etérea y romántica."},
+  "l'immensité":{"familia":"Acuática Amaderada","sal":["Jengibre","Menta","Cardamomo"],"cor":["Madera Acuática","Iris"],"bas":["Cedro","Vetiver","Almizcle"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia expansiva de Louis Vuitton que evoca la vastedad del océano. Fresca, especiada y profundamente amaderada."},
+  "ombre nomade":{"familia":"Oriental Amaderada","sal":["Oud","Bergamota"],"cor":["Rosa","Ámbar"],"bas":["Sándalo","Bálsamo","Cedro"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Viaje olfativo de Louis Vuitton con oud y rosa. Opulenta y suntuosa, una de las fragancias árabes más lujosas de la maison francesa."},
+  "angel":{"familia":"Gourmand Oriental","sal":["Miel","Bergamota"],"cor":["Chocolate","Caramelo","Miel"],"bas":["Patchouli","Vainilla","Ámbar"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Una de las fragancias más icónicas de la historia. Patchouli y notas gourmand de caramelo y chocolate la hacen única e inmediatamente reconocible."},
+  "alien":{"familia":"Floral Amaderada","sal":["Aldeídos"],"cor":["Jazmín","Heliotropo"],"bas":["Sándalo","Cachemira"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia extraterrestre y magnética de Thierry Mugler. El jazmín y el sándalo crean una composición hipnótica y única."},
+  "flowerbomb":{"familia":"Floral Oriental","sal":["Bergamota","Osmanthus","Fresia"],"cor":["Orquídea","Rosa","Jazmín","Peonía"],"bas":["Patchouli","Vetiver","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Explosión de flores concentrada en un frasco granado. Sensual y adictiva, combina múltiples florales sobre una base especiada y cálida."},
+  "scandal":{"familia":"Floral Oriental","sal":["Pomelo"],"cor":["Gardenia","Jazmín","Flor de Naranjo"],"bas":["Vainilla","Pachulí","Ámbar"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia audaz y trasgresora de Jean Paul Gaultier. Florales exuberantes sobre una base cálida y especiada para la mujer que ama la provocación."},
+  "la belle":{"familia":"Floral Frutal","sal":["Pera","Bergamota"],"cor":["Jazmín","Heliotropo","Flor de Naranjo"],"bas":["Vainilla","Caramelo","Vetiver"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia dulce y frutal de Jean Paul Gaultier que evoca la sensualidad femenina. Pera y jazmín se unen a una base caramelizada irresistible."},
+  "ultra male":{"familia":"Oriental Especiada","sal":["Pera","Lavanda","Neroli"],"cor":["Menta","Madera de Abedul"],"bas":["Vainilla","Ámbar","Almizcle"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Versión extrema e intensa del icónico Le Male. La pera dulce contrasta con la lavanda y un corazón de menta sobre una base de vainilla poderosa."},
+  "khamrah":{"familia":"Oriental Especiada","sal":["Mandarina","Naranja"],"cor":["Canela","Cardamomo","Vainilla"],"bas":["Oud","Sándalo","Ámbar"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia árabe profunda y especiada que evoca las especias de oriente. Su mezcla de canela, cardamomo y oud es sumamente evocadora y persistente."},
+  "yara":{"familia":"Floral Gourmand","sal":["Mandarina","Bergamota"],"cor":["Rosa","Almendra","Heliotropo"],"bas":["Vainilla","Almizcle","Sándalo"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Una de las fragancias árabes más queridas, inspirada en Poison Girl de Dior. Dulce y floral con un toque gourmand que la hace irresistible."},
+  "asad":{"familia":"Amaderada Especiada","sal":["Bergamota","Limón"],"cor":["Iris","Jengibre","Pachulí"],"bas":["Cedro","Vetiver","Ámbar"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Fragancia árabe masculina con el espíritu del Sauvage de Dior. Notas amaderadas y especiadas que proyectan fuerza y seguridad."},
+  "miss dior":{"familia":"Floral Chypre","sal":["Bergamota","Toronja"],"cor":["Rosa de Grasse","Peonía"],"bas":["Patchouli","Almizcle","Vetiver"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Clásico renovado con la elegancia de la rosa de Grasse. Romántico y sofisticado, captura la esencia de la feminidad francesa."},
+  "olympea":{"familia":"Floral Acuática","sal":["Higo Verde","Mandarina"],"cor":["Jazmín","Flor de Sal","Agua"],"bas":["Vainilla Salada","Almizcle","Cashmere"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia divina e imponente como una diosa griega. La sal marina y la vainilla crean una combinación única y adictiva."},
+  "arabians tonka":{"familia":"Oriental Gourmand","sal":["Bergamota","Mandarina"],"cor":["Tonka","Almendra","Vainilla"],"bas":["Ámbar","Sándalo","Almizcle"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Una fragancia de Montale que combina la dulzura de la tonka con especias orientales. Cálida, cremosa y magnética."},
+  "hacivat":{"familia":"Frutal Amaderada","sal":["Piña","Bergamota","Limón"],"cor":["Pachulí","Rosa"],"bas":["Cedro","Almizcle","Vetiver"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Una de las fragancias más populares de Nishane. Piña fresca sobre un corazón de patchouli y maderas crea una combinación magnética."},
+  "atomic rose":{"familia":"Floral Especiada","sal":["Pimienta Rosa","Bergamota"],"cor":["Rosa Turca","Oud","Pachulí"],"bas":["Ámbar","Vetiver","Almizcle"],"int":"Intensa","oc":"Noche","est":"Todo el año","desc":"Rosa explosiva e intensa de Initio. La pimienta y el oud amplifican una rosa turca de extraordinaria calidad."},
+  "angel nova":{"familia":"Floral Frutal","sal":["Bergamota","Mandarina"],"cor":["Rosa","Frambuesa","Lichi"],"bas":["Almizcle","Madera","Patchouli"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Una versión más fresca y frutal del mítico Angel. Rosa y frambuesa se combinan sobre una base amaderada y moderna."},
+  "oud wood":{"familia":"Oud Amaderada","sal":["Oud","Palo de Rosa"],"cor":["Cardamomo","Pimienta China"],"bas":["Sándalo","Vetiver","Madera Ambar"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia de oud sofisticada y suave de Tom Ford. Combina oud con sándalo y especias en una composición de gran elegancia."},
+  "born in roma":{"familia":"Amaderada Oriental","sal":["Bergamota","Helicriso"],"cor":["Iris","Palo Santo"],"bas":["Vetiver","Ámbar","Cuero"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia artística de Valentino inspirada en Roma. El iris y el palo santo sobre una base de vetiver crean una fragancia de carácter único."},
+  "oud for glory":{"familia":"Oud Oriental","sal":["Oud","Azafrán"],"cor":["Rosa","Ámbar"],"bas":["Sándalo","Almizcle","Patchouli"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia de oud imponente que combina el poder del oud árabe con rosas y azafrán. Una declaración de lujo oriental."},
+  "boss bottled":{"familia":"Aromática Amaderada","sal":["Manzana","Albahaca","Limón"],"cor":["Ciruelo","Laurel","Geranio"],"bas":["Madera","Sándalo","Vetiver"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Un clásico masculino de Hugo Boss. Su mezcla de manzana fresca con maderas cálidas crea una fragancia versátil y elegante."},
+  "dior homme":{"familia":"Floral Amaderada","sal":["Bergamota","Pomelo"],"cor":["Iris","Lavanda"],"bas":["Vetiver","Cuero","Cachemira"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"La fragancia masculina más floral del mundo. El iris polvoriento crea una masculinidad sofisticada y diferente."},
+  "gentleman only":{"familia":"Aromática Amaderada","sal":["Limón","Bergamota"],"cor":["Flor de Iris","Geranio"],"bas":["Vetiver","Patchouli","Cedro"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Una fragancia masculina refinada de Givenchy. El iris y el vetiver crean una composición elegante y discreta."},
+  "y ysl":{"familia":"Aromática Especiada","sal":["Bergamota","Manzana Verde"],"cor":["Jengibre","Geranio","Salvia"],"bas":["Cedro","Ámbar","Ambroxan"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Fragancia masculina dinámica y fresca de YSL. Sus notas especiadas y amaderadas crean una presencia magnética y moderna."},
+  "althair":{"familia":"Amaderada Oriental","sal":["Bergamota","Mandarina"],"cor":["Oud","Rosa","Azafrán"],"bas":["Cedro","Sándalo","Ámbar"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Una fragancia de lujo de Parfums de Marly con oud y rosa. Opulenta y refinada, perfecta para ocasiones especiales."},
+  "marshmallow blush":{"familia":"Gourmand Floral","sal":["Bergamota","Limón"],"cor":["Marshmallow","Rosa","Peonía"],"bas":["Vainilla","Almizcle","Sándalo"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Una fragancia gourmand irresistible con corazón de marshmallow y flores delicadas. Dulce, suave y adictiva."},
+  "devotion":{"familia":"Floral Frutal","sal":["Tangerina","Naranja","Pomelo"],"cor":["Magnolia","Jazmín","Nardo"],"bas":["Oud","Madera de Cachemira","Almizcle"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia de Dolce & Gabbana que expresa devoción femenina. Sus notas cítricas y florales crean una estela moderna y femenina."},
+  "one million parfum":{"familia":"Oriental Especiada","sal":["Mandarina","Canela","Pomelo"],"cor":["Rosa","Azafrán","Canela"],"bas":["Cuero","Ámbar","Pachulí"],"int":"Muy intensa","oc":"Noche","est":"Otoño-Invierno","desc":"La versión parfum de One Million, más intensa y oscura. Canela y cuero crean una declaración olfativa de poder y seducción."},
+  "le beau":{"familia":"Frutal Marina","sal":["Coco","Bergamota"],"cor":["Flor de Tiaré","Ylang-Ylang"],"bas":["Almizcle","Madera","Ambroxan"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Fragancia tropical y paradisíaca de Jean Paul Gaultier. El coco y la flor de tiaré sobre una base marina crean una escapada al paraíso."},
+  "ck one":{"familia":"Cítrica Aromática","sal":["Bergamota","Cardamomo","Piña"],"cor":["Jazmín","Violeta","Rosa"],"bas":["Almizcle","Ámbar","Cedro"],"int":"Suave","oc":"Todo día","est":"Primavera-Verano","desc":"El perfume unisex por excelencia que definió los años 90. Fresco, limpio y universal, es una fragancia que trasciende el género y el tiempo."},
+  "spicebomb":{"familia":"Especiada Oriental","sal":["Bergamota","Pomelo"],"cor":["Canela","Pimienta Rosa","Elemi"],"bas":["Vetiver","Tabaco","Cuero"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Una bomba de especias de Viktor & Rolf. Canela, pimienta y tabaco crean una fragancia explosiva y masculina."},
+  "costa azzurra":{"familia":"Cítrica Amaderada","sal":["Limón","Bergamota"],"cor":["Cedro","Enebro"],"bas":["Pino","Vetiver","Almizcle"],"int":"Moderada","oc":"Todo día","est":"Primavera-Verano","desc":"Una fragancia que evoca la Costa Azzurra italiana. Notas de pino y cedro sobre una base marina limpia y sofisticada."},
+  "the most wanted":{"familia":"Aromática Especiada","sal":["Cardamomo","Lavanda"],"cor":["Orégano","Vetiver"],"bas":["Tabaco","Pachulí","Ámbar"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia de Azzaro que evoca al hombre deseado. Cardamomo y tabaco crean una masculinidad oscura y seductora."},
+  "wanted":{"familia":"Aromática Amaderada","sal":["Bergamota","Cardamomo","Manzana Verde"],"cor":["Salvia","Vetiver"],"bas":["Cedro","Ámbar","Cuero"],"int":"Intensa","oc":"Todo día","est":"Todo el año","desc":"Fragancia masculina directa y carismática de Azzaro. Sus notas especiadas y amaderadas proyectan confianza y atractivo."},
+  "the one dg":{"familia":"Oriental Amaderada","sal":["Mandarina","Jengibre","Coriandro"],"cor":["Cardamomo","Tabaco","Notas Florales"],"bas":["Vetiver","Cedro","Ámbar"],"int":"Intensa","oc":"Noche","est":"Otoño-Invierno","desc":"Fragancia icónica de Dolce & Gabbana que combina especias orientales con tabaco y madera. Sofisticada y seductora."},
+  "polo":{"familia":"Aromática Chypre","sal":["Limón","Menta"],"cor":["Cuero","Artemisa","Tabaco"],"bas":["Roble","Almizcle","Ámbar"],"int":"Intensa","oc":"Todo día","est":"Otoño-Invierno","desc":"Un clásico americano de Ralph Lauren. Sus notas de cuero y artemisa crean una fragancia deportiva y sofisticada a la vez."},
+  "default":{"familia":"Floral Oriental","sal":["Bergamota","Cítrico"],"cor":["Rosa","Jazmín","Oud"],"bas":["Ámbar","Almizcle","Sándalo"],"int":"Moderada","oc":"Todo día","est":"Todo el año","desc":"Fragancia elegante de la reconocida tradición árabe. Combina notas orientales cálidas con un corazón floral sofisticado sobre una base amaderada persistente."}
+};
+
+// Lookup function: tries dupe name, then perfume name, then brand keywords
+function getNotesInfo(p) {
+  const tryKey = (str) => {
+    if (!str) return null;
+    // Normalize: lowercase, remove accents, remove brand suffix " - Brand"
+    let k = str.toLowerCase()
+      .replace(/ - .+$/, '')           // remove "- Brand" part
+      .replace(/[àáâãä]/g,'a').replace(/[èéêë]/g,'e')
+      .replace(/[ìíîï]/g,'i').replace(/[òóôõö]/g,'o')
+      .replace(/[ùúûü]/g,'u').replace(/[ñ]/g,'n')
+      .replace(/'/g,"'").replace(/'/g,"'")
+      .replace(/\s+\d+ml\s*/g,' ').replace(/\s*(fem|masc|unisex)\s*/gi,' ')
+      .replace(/\s+/g,' ').trim();
+    if (notesDB[k]) return notesDB[k];
+    // Try without trailing words like "intense", "parfum", etc.
+    const simplified = k.replace(/\s*(intense|parfum|elixir|noir|blanche|gold|rouge|extreme|absolu|extrait|edp)\s*$/,'').trim();
+    if (notesDB[simplified]) return notesDB[simplified];
+    // Try matching just first word+second word
+    const parts = k.split(' ');
+    if (parts.length >= 2) {
+      const two = parts.slice(0,2).join(' ');
+      if (notesDB[two]) return notesDB[two];
+    }
+    return null;
+  };
+
+  // 1. Try dupe name (strip brand)
+  let info = tryKey(p.dupe);
+  if (info) return {...info};
+
+  // 2. Try perfume name itself
+  info = tryKey(p.name);
+  if (info) return {...info};
+
+  // 3. Try brand-specific defaults
+  const brand = (p.brand||'').toLowerCase();
+  const name = (p.name||'').toLowerCase();
+  if (name.includes('oud')) return {...notesDB['default'], familia:'Oud Oriental', sal:['Oud','Azafrán','Rosa'], cor:['Ámbar','Patchouli','Incienso'], bas:['Sándalo','Cuero','Almizcle'], desc:'Una fragancia árabe de oud intensa y misteriosa que combina el poder del oud con especias orientales y notas amaderadas.'};
+  if (name.includes('rose') || name.includes('rosa')) return {...notesDB['default'], familia:'Floral Oriental', sal:['Rosa','Bergamota'], cor:['Jazmín','Geranio'], bas:['Almizcle','Ámbar','Sándalo'], desc:'Una fragancia floral centrada en la rosa, evocando elegancia y femineidad con un toque oriental cálido.'};
+  if (name.includes('vanilla') || name.includes('vainilla')) return {...notesDB['default'], familia:'Gourmand Oriental', sal:['Vainilla','Bergamota'], cor:['Tonka','Caramelo'], bas:['Almizcle','Madera','Ámbar'], desc:'Una fragancia gourmand cálida y envolvente con vainilla como nota protagonista.'};
+
+  return {...notesDB['default']};
+}
+
+function openModal(id){
+  const p=productMap[id];
+  if(!p) return;
+  const overlay=document.getElementById('modal-overlay');
+  const accent=document.getElementById('modal-accent');
+  accent.className='modal-accent '+p.cat;
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+
+  if(detailCache[id]){
+    renderModal(id, p, detailCache[id]);
+    return;
+  }
+
+  const info = getNotesInfo(p);
+  info.imagen_url = null;
+  detailCache[id] = info;
+  renderModal(id, p, info);
+}
+
+function observeCards(){} // no-op, no images to prefetch
+
+
+function buildFallback(p){
+  return {
+    descripcion: p.dupe
+      ? `${p.name} es una fragancia de ${p.brand} inspirada en ${p.dupe}. Una opción accesible que captura la esencia del original con notas orientales y especiadas características de la perfumería árabe.`
+      : `${p.name} es una fragancia de ${p.brand}, parte de la reconocida línea de perfumería árabe conocida por su calidad y proyección.`,
+    familia: "Oriental / Amaderada",
+    notas_salida: ["Bergamota", "Limón", "Neroli"],
+    notas_corazon: ["Rosa", "Jazmín", "Oud"],
+    notas_base: ["Almizcle", "Ámbar", "Sándalo"],
+    intensidad: "Moderada",
+    ocasion: "Todo día",
+    estacion: "Todo el año",
+    imagen_url: null
+  };
+}
+
+function renderModal(id, p, info){
+  const priceColor = getPriceTier(p.price, p.cat);
+  const isExtModal = p.cat === 'ext';
+  const vol = p.name.match(/(\d+ml)/i)?.[1]||'';
+  const nameClean = p.name.replace(/\s*\d+ml\s*/i,'').trim();
+
+  const emoji = p.cat==='fem'?'🌸':p.cat==='masc'?'🌊':'✨';
+  const imgHtml = p.img
+    ? `<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:contain;padding:10px" onerror="this.parentElement.innerHTML='<div class=modal-img-placeholder><span>${emoji}</span><span style=text-align:center;padding:0_8px>${p.brand}</span></div>'">`
+    : `<div class="modal-img-placeholder"><span>${emoji}</span><span style="text-align:center;padding:0 8px">${p.brand}</span></div>`;
+
+  const tagN = (n,cls) => `<span class="note-tag ${cls}">${n}</span>`;
+  const topNotes = (info.notas_salida||[]).map(n=>tagN(n,'top')).join('');
+  const midNotes = (info.notas_corazon||[]).map(n=>tagN(n,'mid')).join('');
+  const baseNotes = (info.notas_base||[]).map(n=>tagN(n,'base')).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-top">
+      <div class="modal-img-wrap">${imgHtml}</div>
+      <div class="modal-info">
+        <span class="modal-cat-tag ${p.cat}">${catLabels[p.cat]}</span>
+        <div class="modal-brand">${p.brand}</div>
+        <div class="modal-name">${nameClean}${vol?` <span style="font-size:.6em;opacity:.5">${vol}</span>`:''}</div>
+        <div class="modal-price-row">
+          <span class="modal-price" style="color:${priceColor}">${fmtPrice(p.price)}</span>
+          ${info.familia?`<span style="font-size:.65rem;color:#333;letter-spacing:.1em;text-transform:uppercase;font-weight:700">${info.familia}</span>`:''}
+        </div>
+        ${p.dupe?`<div class="modal-dupe-label">Inspirado en</div><div class="modal-dupe">✦ ${p.dupe}</div>`:''}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          ${info.intensidad?`<span style="background:#e0f7fa;border:1px solid #00bcd4;color:#006064;font-size:.6rem;padding:3px 10px;border-radius:20px;font-weight:700">⚡ ${info.intensidad}</span>`:''}
+          ${info.ocasion?`<span style="background:#f5f5f5;border:1px solid #ccc;color:#333;font-size:.6rem;padding:3px 10px;border-radius:20px">🕐 ${info.ocasion}</span>`:''}
+          ${info.estacion?`<span style="background:#f5f5f5;border:1px solid #ccc;color:#333;font-size:.6rem;padding:3px 10px;border-radius:20px">🍃 ${info.estacion}</span>`:''}
+        </div>
+      </div>
+    </div>
+    ${info.descripcion?`<hr class="modal-divider"><div class="modal-section-title">Descripción</div><div class="modal-desc">${info.descripcion}</div>`:''}
+    <hr class="modal-divider">
+    <div class="modal-section-title">Pirámide olfativa</div>
+    <div class="notes-legend">
+      <div class="notes-legend-item"><div class="notes-legend-dot" style="background:#00bcd4"></div>Salida</div>
+      <div class="notes-legend-item"><div class="notes-legend-dot" style="background:#009688"></div>Corazón</div>
+      <div class="notes-legend-item"><div class="notes-legend-dot" style="background:#004d40"></div>Base</div>
+    </div>
+    <div class="modal-notes-grid">${topNotes}${midNotes}${baseNotes}</div>
+    <hr class="modal-divider">
+    <div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap">
+      <a href="https://wa.me/5491153114305?text=${encodeURIComponent(`Hola! Me gustaría consultar sobre el perfume *${p.name}* de *${p.brand}* (Precio: ${fmtPrice(p.price)}). ¿Está disponible?`)}" target="_blank" class="wa-btn" style="flex:1;min-width:160px">
+        <span class="wa-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </span>
+        Consultar
+      </a>
+      <button onclick="addToCart('${id}'); closeModalDirect();" class="cart-add-btn" style="flex:1;min-width:160px">
+        <span>🛒</span> Agregar al carrito
+      </button>
+    </div>
+  `;
+}
+
+function closeModal(e){ if(e.target===document.getElementById('modal-overlay')) closeModalDirect(); }
+function closeModalDirect(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModalDirect(); });
+
+// Init stats
+document.getElementById('total-count').textContent=allProducts.length;
+document.getElementById('brand-count').textContent=new Set(allProducts.map(p=>p.brand)).size;
+const prices=allProducts.map(p=>p.price);
+document.getElementById('min-price').textContent='$'+(Math.min(...prices)/1000).toFixed(0)+'k';
+document.getElementById('max-price').textContent='$'+(Math.max(...prices)/1000).toFixed(0)+'k';
+render();
+
+// ═══════════════════════════════════════════════════════════════════
+// CART LOGIC
+// ═══════════════════════════════════════════════════════════════════
+let cart = {}; // {id: {p, qty}}
+
+function addToCart(id) {
+  const p = productMap[id];
+  if (!p) return;
+  if (cart[id]) {
+    cart[id].qty++;
+  } else {
+    cart[id] = {p, qty: 1};
+  }
+  updateCartBadge();
+  showCartToast(p.name);
+}
+
+function removeFromCart(id) {
+  delete cart[id];
+  updateCartBadge();
+  renderCartItems();
+}
+
+function updateCartBadge() {
+  const total = Object.values(cart).reduce((s, i) => s + i.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  if (total > 0) {
+    badge.textContent = total;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderCartItems() {
+  const container = document.getElementById('cart-items');
+  const footer = document.getElementById('cart-footer');
+  const empty = document.getElementById('cart-empty');
+  const items = Object.entries(cart);
+
+  if (items.length === 0) {
+    container.innerHTML = '<div class="cart-empty" id="cart-empty"><span style="font-size:2.5rem">🛒</span><span>Tu carrito está vacío</span></div>';
+    footer.style.display = 'none';
+    return;
+  }
+
+  footer.style.display = 'block';
+
+  let html = '';
+  let total = 0;
+  items.forEach(([id, {p, qty}]) => {
+    const price = p.price * qty;
+    total += price;
+    const catColor = p.cat==='fem'?'#c96b8a':p.cat==='masc'?'#4a7ab5':p.cat==='ext'?'#00bcd4':'#7ab58a';
+    const nameClean = p.name.replace(/\s*\d+ml\s*/i, '').trim();
+    const priceStr = p.price === 0 ? 'Consultar' : fmtPrice(price);
+    html += `<div class="cart-item" style="border-left-color:${catColor}">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${nameClean}${qty > 1 ? ` <span style="color:#00bcd4;font-size:.75em">×${qty}</span>` : ''}</div>
+        <div class="cart-item-brand">${p.brand} · ${catLabels[p.cat]}</div>
+      </div>
+      <span class="cart-item-price">${priceStr}</span>
+      <button class="cart-item-remove" onclick="removeFromCart('${id}')" title="Eliminar">✕</button>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  document.getElementById('cart-total').textContent = fmtPrice(total);
+}
+
+function openCart() {
+  renderCartItems();
+  document.getElementById('cart-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCart(e) {
+  if (e.target === document.getElementById('cart-overlay')) closeCartDirect();
+}
+
+function closeCartDirect() {
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function checkoutWhatsApp() {
+  const items = Object.values(cart);
+  if (!items.length) return;
+  let msg = 'Hola! Me gustaría consultar sobre los siguientes perfumes:\n\n';
+  let total = 0;
+  items.forEach(({p, qty}) => {
+    const subtotal = p.price * qty;
+    total += subtotal;
+    msg += `• *${p.name}* de *${p.brand}*`;
+    if (qty > 1) msg += ` (x${qty})`;
+    if (p.price > 0) msg += ` — ${fmtPrice(subtotal)}`;
+    msg += '\n';
+  });
+  if (total > 0) msg += `\n*Total estimado: ${fmtPrice(total)}*`;
+  msg += '\n\n¿Están disponibles?';
+  window.open('https://wa.me/5491153114305?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function showCartToast(name) {
+  let toast = document.getElementById('cart-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'cart-toast';
+    toast.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#00bcd4;color:#fff;font-family:Nunito,sans-serif;font-size:.8rem;font-weight:700;padding:10px 22px;border-radius:30px;z-index:9999;transition:opacity .3s;box-shadow:0 4px 16px rgba(0,188,212,.4)';
+    document.body.appendChild(toast);
+  }
+  const nameShort = name.replace(/\s*\d+ml.*/i, '').trim();
+  toast.textContent = '🛒 ' + nameShort + ' agregado';
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 2200);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModalDirect();
+    closeCartDirect();
+  }
+});
+</script>
+</body>
+</html>
